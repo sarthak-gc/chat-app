@@ -1,4 +1,5 @@
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import UserModel from "../models/user.model.js";
 dotenv.config();
@@ -31,13 +32,14 @@ export const userRegistration = async (req, res) => {
     return res.status(400).json({ message: "Missing username or password" });
   }
   try {
-    const existingUser = await UserModel.find({ username });
+    const existingUser = await UserModel.findOne({ username });
+
     if (existingUser) {
       return res.status(409).json({ message: "Username already exists" });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await UserModel.create({
-      userName: username,
+    await UserModel.create({
+      username,
       password: hashedPassword,
     });
 
@@ -51,8 +53,10 @@ export const userRegistration = async (req, res) => {
       },
     });
   } catch (e) {
-    // console.log(e);
-    res.status(500).json({ message: "Failed to register user. Try again" });
+    console.log(e);
+    res
+      .status(500)
+      .json({ status: "error", message: "Failed to register user. Try again" });
   }
 };
 // userRouter.post("/login", login);
@@ -65,7 +69,10 @@ export const login = async (req, res) => {
   }
   try {
     const user = await UserModel.findOne({ username });
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user) {
+      throw new Error("User not found");
+    }
+    if (!user || !bcrypt.compare(password, user.password)) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
@@ -96,7 +103,7 @@ export const searchUser = async (req, res) => {
   try {
     const results = await UserModel.find({
       username: { $regex: filterQuery, $options: "i" },
-    });
+    }).select("username");
     if (results.length === 0) {
       return res.status(404).json({
         status: "success",

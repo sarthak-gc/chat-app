@@ -1,17 +1,19 @@
 import mongoose from "mongoose";
 import GroupModel from "../models/group.model.js";
-
+import UserModel from "../models/user.model.js";
 // groupRouter.post("/create", createGroup);
 export const createGroup = async (req, res) => {
   const { groupName, members, visibility } = req.body;
-  const creator = req.id;
+  const uniqueMembers = [...new Set(members)];
+  // const creator = req.id;
+  const creator = "67deefa35db108fc903c293b";
 
   try {
     const newGroup = await GroupModel.create({
       groupName,
-      members,
+      members: uniqueMembers,
       creator,
-      visibility,
+      visibility: visibility === "Private" ? "Private" : "Public",
     });
 
     res.status(201).json({
@@ -62,6 +64,9 @@ export const deleteGroup = async (req, res) => {
 // groupRouter.post("/:groupId/member/:userId", addMember);
 export const addMember = async (req, res) => {
   const { userId, groupId } = req.params;
+  req.id = "67deefa35db108fc903c293b"; // creator
+  // req.id = "67def352d6aeb72ebad9112d"; // random
+
   try {
     const groupExists = await GroupModel.findById(groupId);
     if (!groupExists) {
@@ -80,10 +85,19 @@ export const addMember = async (req, res) => {
       });
     }
 
-    if (groupExists.members.includes(userId)) {
+    if (
+      groupExists.members.includes(userId) ||
+      groupExists.creator.toString() === userId
+    ) {
       return res
         .status(400)
         .json({ status: "error", message: "Member already exists in group" });
+    }
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ status: "error", message: "User not found" });
     }
     const addedMember = await GroupModel.findByIdAndUpdate(
       groupId,
@@ -111,10 +125,27 @@ export const addMember = async (req, res) => {
 // groupRouter.get("/:groupId/members", getMembers);
 export const getMembers = async (req, res) => {
   const { groupId } = req.params;
+  req.id = "67deefa35db108fc903c293b"; // creator
+  // req.id = "67def352d6aeb72ebad9112d"; //member
+  // req.id = "67def362d6aeb72ebad91139";
   try {
-    const group = await GroupModel.findById(groupId).select("creator members");
+    const group = await GroupModel.findById(groupId).select(
+      "creator members visibility"
+    );
 
-    const members = [...group.creator, ...group.members];
+    if (group.visibility === "Private") {
+      if (
+        group.creator.toString() !== req.id &&
+        !group.members.includes(req.id)
+      ) {
+        return res.status(403).json({
+          status: "error",
+          message: "You are not authorized to view private group members.",
+        });
+      }
+    }
+
+    const members = [group.creator.toString(), ...group.members];
     res.json({
       status: "success",
       message: "Members Retrieved successfully",
@@ -170,8 +201,27 @@ export const searchGroup = async (req, res) => {
     }
     const results = await GroupModel.find({
       groupName: { $regex: filterQuery, $options: "i" },
-    });
-    if (results.length === 0) {
+      visibility: "Public",
+    })
+      .populate("members", "username ")
+      .populate("creator", "username ");
+    const privateGroups = await GroupModel.aggregate([
+      {
+        $match: {
+          groupName: { $regex: filterQuery, $options: "i" },
+          visibility: "Private",
+        },
+      },
+      {
+        $project: {
+          groupName: 1,
+          visibility: 1,
+          membersCount: { $size: "$members" },
+        },
+      },
+    ]);
+
+    if (results.length === 0 && privateGroups.length === 0) {
       return res.status(404).json({
         status: "success",
         message: "No groups found with that name",
@@ -184,7 +234,7 @@ export const searchGroup = async (req, res) => {
       status: "success",
       message: "Groups Retrieved successfully",
       data: {
-        results,
+        results: [...results, ...privateGroups],
       },
     });
   } catch (e) {

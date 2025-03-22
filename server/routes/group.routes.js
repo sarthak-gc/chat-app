@@ -20,7 +20,7 @@ groupRouter.delete("/delete/:groupId", deleteGroup);
 groupRouter.post("/:groupId/member/:userId", addMember);
 groupRouter.get("/:groupId/members", getMembers);
 groupRouter.get("/:groupId", getGroupDetails);
-groupRouter.get("/search", searchGroup);
+groupRouter.get("/search/group", searchGroup);
 groupRouter.post("/:groupId/join", joinGroup);
 groupRouter.delete("/:groupId/leave", leaveGroup);
 groupRouter.put("/:groupId/visibility", toggleVisibility);
