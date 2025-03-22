@@ -11,7 +11,7 @@ import {
   toggleVisibility,
   kickMember,
   transferOwnership,
-} from "../controllers/group.controllers";
+} from "../controllers/group.controllers.js";
 
 const groupRouter = express.Router();
 
@@ -26,4 +26,5 @@ groupRouter.delete("/:groupId/leave", leaveGroup);
 groupRouter.put("/:groupId/visibility", toggleVisibility);
 groupRouter.delete("/:groupId/member/:memberId/kick", kickMember);
 groupRouter.put("/:groupId/transfer/admin/:memberId", transferOwnership);
+
 export default groupRouter;

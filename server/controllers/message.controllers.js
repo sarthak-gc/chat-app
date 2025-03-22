@@ -1,7 +1,7 @@
-import UserModel from "../models/user.model";
-import MessageModel from "../models/message.model";
-import NotificationModel from "../models/notification.model";
-import GroupModel from "../models/group.model";
+import UserModel from "../models/user.model.js";
+import MessageModel from "../models/message.model.js";
+import NotificationModel from "../models/notification.model.js";
+import GroupModel from "../models/group.model.js";
 import mongoose from "mongoose";
 
 // messageRouter.post("/:senderId/to/:receiverId", sendMessage);

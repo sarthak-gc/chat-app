@@ -8,7 +8,7 @@ import {
   getMessages,
   getNewGroupMessages,
   getNewMessage,
-} from "../controllers/message.controllers";
+} from "../controllers/message.controllers.js";
 
 const messageRouter = express.Router();
 

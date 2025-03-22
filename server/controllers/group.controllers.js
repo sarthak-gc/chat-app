@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import GroupModel from "../models/group.model";
+import GroupModel from "../models/group.model.js";
 
 // groupRouter.post("/create", createGroup);
 export const createGroup = async (req, res) => {

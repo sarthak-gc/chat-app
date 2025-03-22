@@ -1,8 +1,8 @@
 import express from "express";
-import userRouter from "./user.routes";
-import groupRouter from "./group.routes";
-import messageRouter from "./message.routes";
-import notificationRouter from "./notification.routes";
+import userRouter from "./user.routes.js";
+import groupRouter from "./group.routes.js";
+import messageRouter from "./message.routes.js";
+import notificationRouter from "./notification.routes.js";
 
 const router = express.Router();
 

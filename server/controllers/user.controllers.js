@@ -1,5 +1,6 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
+import UserModel from "../models/user.model.js";
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -30,12 +31,15 @@ export const userRegistration = async (req, res) => {
     return res.status(400).json({ message: "Missing username or password" });
   }
   try {
-    const existingUser = await UserModel.findOne({ username });
+    const existingUser = await UserModel.find({ username });
     if (existingUser) {
       return res.status(409).json({ message: "Username already exists" });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await UserModel.create({ username, password: hashedPassword });
+    const user = await UserModel.create({
+      userName: username,
+      password: hashedPassword,
+    });
 
     const token = jwt.sign({ username }, JWT_SECRET);
     res.status(201).json({
@@ -47,7 +51,7 @@ export const userRegistration = async (req, res) => {
       },
     });
   } catch (e) {
-    console.log(e);
+    // console.log(e);
     res.status(500).json({ message: "Failed to register user. Try again" });
   }
 };
