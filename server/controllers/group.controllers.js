@@ -507,3 +507,45 @@ export const transferOwnership = async (req, res) => {
     });
   }
 };
+
+// groupRouter.get("/joined", getJoinedGroup);
+export const getJoinedGroup = async (req, res) => {
+  // req.id = "67deefa35db108fc903c293b"; //creator
+  req.id = "67def34fd6aeb72ebad9112a"; // member
+  // req.id = "67def362d6aeb72ebad91139"; // random
+  try {
+    const groups = await GroupModel.find({});
+
+    if (groups.length === 0) {
+      return res.json({
+        status: "success",
+        message: "No groups found",
+        data: { groups: [] },
+      });
+    }
+
+    const joinedGroups = groups.filter(
+      (group) =>
+        group.members.includes(req.id) || group.creator.toString() === req.id
+    );
+
+    if (joinedGroups.length === 0) {
+      return res.json({
+        status: "success",
+        message: "No joined groups found",
+        data: { groups: [] },
+      });
+    }
+    res.json({
+      status: "success",
+      message: "Joined groups fetched successfully",
+      data: { groups: joinedGroups },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to find group. Try again",
+    });
+  }
+};
