@@ -1,0 +1,14 @@
+users should be able to login 
+users can create groups 
+
+users can join/leave a group
+
+anyone can send msg to anyone if they know their username
+
+group can be public or private
+public groups can be joined by anyone
+members in private can only be added by the creator of the group
+
+
+using websocket
+

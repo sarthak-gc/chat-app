@@ -13,6 +13,6 @@ userRouter.get("/:username", getUser);
 userRouter.post("/register", userRegistration);
 userRouter.post("/login", login);
 userRouter.post("/logout", logout);
-userRouter.post("/search", searchUser);
+userRouter.get("/search/query", searchUser);
 
 export default userRouter;

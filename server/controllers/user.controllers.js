@@ -61,7 +61,7 @@ export const userRegistration = async (req, res) => {
 };
 // userRouter.post("/login", login);
 export const login = async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password } = req.body.body;
   if (!username || !password) {
     return res
       .status(400)
@@ -70,7 +70,9 @@ export const login = async (req, res) => {
   try {
     const user = await UserModel.findOne({ username });
     if (!user) {
-      throw new Error("User not found");
+      return res
+        .status(404)
+        .json({ status: "error", message: "User not found" });
     }
     if (!user || !bcrypt.compare(password, user.password)) {
       return res.status(401).json({ message: "Invalid credentials" });

@@ -514,8 +514,9 @@ export const getJoinedGroup = async (req, res) => {
   req.id = "67def34fd6aeb72ebad9112a"; // member
   // req.id = "67def362d6aeb72ebad91139"; // random
   try {
-    const groups = await GroupModel.find({});
-
+    const groups = await GroupModel.find({})
+      .populate("creator", "username")
+      .populate("members", "username");
     if (groups.length === 0) {
       return res.json({
         status: "success",
@@ -524,10 +525,13 @@ export const getJoinedGroup = async (req, res) => {
       });
     }
 
-    const joinedGroups = groups.filter(
-      (group) =>
-        group.members.includes(req.id) || group.creator.toString() === req.id
-    );
+    const joinedGroups = groups.filter((group) => {
+      const isMember = group.members.some(
+        (member) => member._id.toString() === req.id
+      );
+      const isCreator = group.creator._id.toString() === req.id;
+      return isMember || isCreator;
+    });
 
     if (joinedGroups.length === 0) {
       return res.json({

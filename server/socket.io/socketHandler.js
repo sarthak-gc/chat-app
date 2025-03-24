@@ -69,6 +69,8 @@ export const socketHandler = (io) => {
     });
 
     socket.on("message", (message) => {
+      console.log(message);
+      socket.emit("message", "LESSS GOOOO");
       broadcastNewMessage(io, message);
     });
 
