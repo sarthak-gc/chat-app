@@ -3,10 +3,14 @@ import GroupModel from "../models/group.model.js";
 import UserModel from "../models/user.model.js";
 // groupRouter.post("/create", createGroup);
 export const createGroup = async (req, res) => {
-  const { groupName, members, visibility } = req.body;
+  const { groupName, members, visibility } = req.body.body;
+  if (!groupName || groupName.trim() === "") {
+    return res
+      .status(400)
+      .json({ status: "error", message: "Group name is required" });
+  }
   const uniqueMembers = [...new Set(members)];
-  // const creator = req.id;
-  const creator = "67deefa35db108fc903c293b";
+  const creator = req.id;
 
   try {
     const newGroup = await GroupModel.create({
@@ -39,7 +43,15 @@ export const deleteGroup = async (req, res) => {
         .status(404)
         .json({ status: "error", message: "Group not found" });
     }
-
+    if (
+      !groupExists.members.includes(req.id) &&
+      groupExists.creator.toString() !== req.id
+    ) {
+      return res.status(403).json({
+        status: "error",
+        message: "You are not the part of this group",
+      });
+    }
     if (groupExists.creator.toString() !== req.id) {
       return res.status(403).json({
         status: "error",
@@ -64,8 +76,6 @@ export const deleteGroup = async (req, res) => {
 // groupRouter.post("/:groupId/member/:userId", addMember);
 export const addMember = async (req, res) => {
   const { userId, groupId } = req.params;
-  req.id = "67deefa35db108fc903c293b"; // creator
-  // req.id = "67def352d6aeb72ebad9112d"; // random
 
   try {
     const groupExists = await GroupModel.findById(groupId);
@@ -85,6 +95,13 @@ export const addMember = async (req, res) => {
       });
     }
 
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ status: "error", message: "User not found" });
+    }
+
     if (
       groupExists.members.includes(userId) ||
       groupExists.creator.toString() === userId
@@ -93,12 +110,7 @@ export const addMember = async (req, res) => {
         .status(400)
         .json({ status: "error", message: "Member already exists in group" });
     }
-    const user = await UserModel.findById(userId);
-    if (!user) {
-      return res
-        .status(404)
-        .json({ status: "error", message: "User not found" });
-    }
+
     const addedMember = await GroupModel.findByIdAndUpdate(
       groupId,
       {
@@ -125,27 +137,25 @@ export const addMember = async (req, res) => {
 // groupRouter.get("/:groupId/members", getMembers);
 export const getMembers = async (req, res) => {
   const { groupId } = req.params;
-  req.id = "67deefa35db108fc903c293b"; // creator
-  // req.id = "67def352d6aeb72ebad9112d"; //member
-  // req.id = "67def362d6aeb72ebad91139";
   try {
-    const group = await GroupModel.findById(groupId).select(
-      "creator members visibility"
-    );
+    const group = await GroupModel.findById(groupId)
+      .select("visibility")
+      .populate("creator", "username")
+      .populate("members", "username");
+
+    const isMember = group.members.find((member) => member._id.equals(req.id));
 
     if (group.visibility === "Private") {
-      if (
-        group.creator.toString() !== req.id &&
-        !group.members.includes(req.id)
-      ) {
+      if (group.creator._id.toString() !== req.id && !isMember) {
         return res.status(403).json({
           status: "error",
-          message: "You are not authorized to view private group members.",
+          message: "You cannot view private group members.",
         });
       }
     }
 
-    const members = [group.creator.toString(), ...group.members];
+    const members = [group.creator, ...group.members];
+    console.log(members);
     res.json({
       status: "success",
       message: "Members Retrieved successfully",
@@ -169,13 +179,30 @@ export const getGroupDetails = async (req, res) => {
       .json({ status: "error", message: "Invalid group ID" });
   }
   try {
-    const groupExists = await GroupModel.findById(groupId);
+    const groupExists = await GroupModel.findById(groupId)
+      .select("visibility")
+      .populate("creator", "username")
+      .populate("members", "username");
 
     if (!groupExists) {
       return res
         .status(404)
         .json({ status: "error", message: "Group not found" });
     }
+
+    const isMember = groupExists.members.find((member) =>
+      member._id.equals(req.id)
+    );
+
+    if (groupExists.visibility === "Private") {
+      if (groupExists.creator._id.toString() !== req.id && !isMember) {
+        return res.status(403).json({
+          status: "error",
+          message: "You cannot view private group details.",
+        });
+      }
+    }
+
     res.json({
       status: "success",
       message: "Group Details Retrieved successfully",
@@ -510,9 +537,6 @@ export const transferOwnership = async (req, res) => {
 
 // groupRouter.get("/joined", getJoinedGroup);
 export const getJoinedGroup = async (req, res) => {
-  // req.id = "67deefa35db108fc903c293b"; //creator
-  req.id = "67def34fd6aeb72ebad9112a"; // member
-  // req.id = "67def362d6aeb72ebad91139"; // random
   try {
     const groups = await GroupModel.find({})
       .populate("creator", "username")
@@ -526,9 +550,12 @@ export const getJoinedGroup = async (req, res) => {
     }
 
     const joinedGroups = groups.filter((group) => {
-      const isMember = group.members.some(
-        (member) => member._id.toString() === req.id
-      );
+      let isMember;
+      if (group.members.length > 0) {
+        isMember = group.members.some(
+          (member) => member._id.toString() === req.id
+        );
+      }
       const isCreator = group.creator._id.toString() === req.id;
       return isMember || isCreator;
     });

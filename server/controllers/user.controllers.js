@@ -27,7 +27,7 @@ export const getUser = async (req, res) => {
 };
 // userRouter.post("/register", userRegistration);
 export const userRegistration = async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password } = req.body.body;
   if (!username || !password) {
     return res.status(400).json({ message: "Missing username or password" });
   }
@@ -38,12 +38,18 @@ export const userRegistration = async (req, res) => {
       return res.status(409).json({ message: "Username already exists" });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    await UserModel.create({
+    const newUser = await UserModel.create({
       username,
       password: hashedPassword,
     });
 
-    const token = jwt.sign({ username }, JWT_SECRET);
+    const token = jwt.sign(
+      { username: newUser.username, id: newUser._id },
+      JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
     res.status(201).json({
       status: "success",
       message: "User registered successfully",
@@ -74,11 +80,16 @@ export const login = async (req, res) => {
         .status(404)
         .json({ status: "error", message: "User not found" });
     }
-    if (!user || !bcrypt.compare(password, user.password)) {
+
+    if (!(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ username }, JWT_SECRET);
+    const token = jwt.sign(
+      { username: user.username, id: user._id },
+      JWT_SECRET,
+      { expiresIn: "1h" }
+    );
     res.json({
       status: "success",
       message: "Login successful",
@@ -104,7 +115,10 @@ export const searchUser = async (req, res) => {
   }
   try {
     const results = await UserModel.find({
-      username: { $regex: filterQuery, $options: "i" },
+      $and: [
+        { username: { $regex: filterQuery, $options: "i" } },
+        { _id: { $ne: req.id } },
+      ],
     }).select("username");
     if (results.length === 0) {
       return res.status(404).json({

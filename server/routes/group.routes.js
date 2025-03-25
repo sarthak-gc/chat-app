@@ -13,9 +13,11 @@ import {
   transferOwnership,
   getJoinedGroup,
 } from "../controllers/group.controllers.js";
+import authentication from "../middlewares/authentication.js";
 
 const groupRouter = express.Router();
 
+groupRouter.use(authentication);
 groupRouter.post("/create", createGroup);
 groupRouter.delete("/delete/:groupId", deleteGroup);
 groupRouter.post("/:groupId/member/:userId", addMember);

@@ -6,13 +6,14 @@ import {
   searchUser,
   userRegistration,
 } from "../controllers/user.controllers.js";
+import authentication from "../middlewares/authentication.js";
 
 const userRouter = express.Router();
 
-userRouter.get("/:username", getUser);
+userRouter.get("/:username", authentication, getUser);
 userRouter.post("/register", userRegistration);
 userRouter.post("/login", login);
-userRouter.post("/logout", logout);
-userRouter.get("/search/query", searchUser);
+userRouter.post("/logout", authentication, logout);
+userRouter.get("/search/query", authentication, searchUser);
 
 export default userRouter;

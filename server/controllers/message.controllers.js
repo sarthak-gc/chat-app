@@ -6,7 +6,8 @@ import mongoose from "mongoose";
 
 // messageRouter.post("/:senderId/to/:receiverId", sendMessage);
 export const sendMessage = async (req, res) => {
-  const { senderId, receiverId } = req.params;
+  const { receiverId } = req.params;
+  const senderId = req.id;
   const { message } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(senderId)) {
@@ -33,10 +34,10 @@ export const sendMessage = async (req, res) => {
       UserModel.findById(receiverId),
     ]);
 
-    if (!sender || !receiver) {
+    if (!receiver) {
       return res.status(404).json({
         status: "error",
-        message: !sender ? "Sender not found" : "Receiver Not Found",
+        message: "Receiver Not Found",
       });
     }
     const sentMessage = await MessageModel.create({
