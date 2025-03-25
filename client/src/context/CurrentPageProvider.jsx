@@ -6,7 +6,7 @@ export const CurrentPageProvider = ({ children }) => {
   const [currentPage, setCurrentPage] = useState("users");
   useEffect(() => {
     if (window.location.pathname.startsWith("/feed/")) {
-      setCurrentPage(window.location.pathname.split("/").pop());
+      setCurrentPage(window.location.pathname.split("/")[2]);
     }
   }, []);
   const SetToUsersPage = () => setCurrentPage("users");

@@ -15,7 +15,11 @@ const GroupDetails = () => {
       <h1 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
         {group.groupName[0].toUpperCase() + group.groupName.slice(1)}
       </h1>
+
       <ul className="space-y-2">
+        <li>
+          Creator : <span>{group.creator.username}</span>
+        </li>
         {members.map((member) => (
           <li
             key={member.id}

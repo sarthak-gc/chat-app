@@ -5,6 +5,7 @@ import get from "../../utils/api/getRoutes";
 import Loader from "./Loader";
 import { useNavigate } from "react-router-dom";
 import UserContext from "../context/UserDetails";
+
 const useDebounce = (value, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
   useEffect(() => {
@@ -100,6 +101,10 @@ const Sidebar = ({ joinedGroups }) => {
     });
   };
 
+  const handleGroupCreate = () => {
+    navigate("groups/create");
+    prompt("Enter group name");
+  };
   return (
     <div className="w-96 bg-[#1a212c] h-screen relative flex-none">
       <div className="p-4 flex flex-col gap-2 border-b border-gray-200 relative ">
@@ -108,7 +113,10 @@ const Sidebar = ({ joinedGroups }) => {
             {currentPage && currentPage[0].toUpperCase() + currentPage.slice(1)}
           </h1>
           {currentPage === "groups" && (
-            <span className="absolute top-0 right-10  hover:bg-[#24303f] w-7 h-7 flex items-center justify-center rounded-full cursor-pointer">
+            <span
+              onClick={handleGroupCreate}
+              className="absolute top-0 right-10  hover:bg-[#24303f] w-7 h-7 flex items-center justify-center rounded-full cursor-pointer"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -234,7 +242,7 @@ const Sidebar = ({ joinedGroups }) => {
                       group.visibility === "Public" ? "" : "blur-sm"
                     }`}
                   >
-                    {group.groupName}243
+                    {group.groupName}
                   </span>
                 </div>
               </div>

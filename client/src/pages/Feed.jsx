@@ -7,6 +7,7 @@ const URL = "http://localhost:3000";
 import Sidebar from "../components/Sidebar.jsx";
 import MessageArea from "../components/MessageArea.jsx";
 import Welcome from "./Welcome.jsx";
+import { Outlet } from "react-router-dom";
 let socket;
 const Feed = () => {
   const [joinedGroups, setJoinedGroups] = useState([]);
@@ -42,7 +43,7 @@ const Feed = () => {
   return (
     <div className="flex">
       <Sidebar joinedGroups={joinedGroups} users={users} />
-      <Welcome />
+      <Outlet joinedGroups={joinedGroups} />
     </div>
   );
 };

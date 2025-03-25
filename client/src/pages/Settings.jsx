@@ -2,7 +2,7 @@ import React from "react";
 import Sidebar from "../components/Sidebar";
 
 const Settings = () => {
-  return <Sidebar />;
+  // return <Sidebar />;
 };
 
 export default Settings;
