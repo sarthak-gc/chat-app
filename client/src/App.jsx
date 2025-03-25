@@ -1,54 +1,58 @@
-// import React from "react";
-// import Login from "./pages/Login";
-// import Register from "./pages/Register";
-// import Feed from "./pages/Feed";
-// import { Route, Routes } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
+import CreateGroup from "./pages/CreateGroup";
+import { RouterProvider } from "react-router-dom";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Feed from "./pages/Feed";
 // import SearchPage from "./pages/SearchPage";
-// import PageNotFound from "./pages/PageNotFound";
-// import { CurrentPageProvider } from "./context/CurrentPageProvider";
-// import GroupPage from "./pages/GroupPage";
-// import UserPage from "./pages/UserPage";
-// import Settings from "./pages/Settings";
-// import Message from "./pages/Message";
-// import GroupDetails from "./components/GroupDetails";
-// import { UserDetails } from "./context/UserDetails";
-// import CreateGroup from "./pages/CreateGroup";
+import PageNotFound from "./pages/PageNotFound";
+import { CurrentPageProvider } from "./context/CurrentPageProvider";
+import GroupPage from "./pages/GroupPage";
+import UserPage from "./pages/UserPage";
+import Settings from "./pages/Settings";
+import Message from "./pages/Message";
+import GroupDetails from "./components/GroupDetails";
+import { UserDetails } from "./context/UserDetails";
+import UserDetailPage from "./pages/UserDetailPage";
+import MessageArea from "./components/MessageArea";
 
-// const App = () => {
-//   return (
-//     <>
-//       <UserDetails>
-//         <CurrentPageProvider>
-//           <Routes>
-//             <Route path="*" element={<PageNotFound />} />
-//             <Route path="search" element={<SearchPage />} />
-//             <Route path="/login" element={<Login />} />
-//             <Route path="/register" element={<Register />} />
-//             <Route path="/feed" element={<Feed />}>
-//               <Route path="users" element={<UserPage />} />
-//               <Route path="groups" element={<GroupPage />}>
-//                 <Route path="create" element={<CreateGroup />} />
-//               </Route>
-//               <Route path="settings" element={<Settings />} />
-//             </Route>
-//             <Route path="message/user/:userId" element={<Message />} />
-//             <Route path="details/group/:groupId" element={<GroupDetails />} />
-//           </Routes>
+const router = createBrowserRouter([
+  { path: "/", element: <Login />, errorElement: <PageNotFound /> },
+  { path: "/login", element: <Login /> },
+  { path: "/register", element: <Register /> },
+  {
+    path: "/feed",
+    element: <Feed />,
+    children: [
+      {
+        path: "users",
+        element: <UserPage />,
+      },
+      {
+        path: "groups",
+        element: <GroupPage />,
+        children: [
+          { path: "create", element: <CreateGroup /> },
+          { path: ":groupId/details", element: <GroupDetails /> },
+        ],
+      },
+      { path: "user/:userId/detail", element: <UserDetailPage /> },
 
-//         </CurrentPageProvider>
-//       </UserDetails>
-//     </>
-//   );
-// };
-
-// export default App;
-
-import React from 'react'
+      { path: "settings", element: <Settings /> },
+      { path: "user/:userId/message", element: <Message /> },
+    ],
+  },
+  { path: "/testing", element: <MessageArea /> },
+]);
 
 const App = () => {
   return (
-    <div>App</div>
-  )
-}
+    <UserDetails>
+      <CurrentPageProvider>
+        <RouterProvider router={router} />
+      </CurrentPageProvider>
+    </UserDetails>
+  );
+};
 
-export default App
+export default App;

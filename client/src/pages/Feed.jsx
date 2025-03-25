@@ -7,18 +7,22 @@ const URL = "http://localhost:3000";
 import Sidebar from "../components/Sidebar.jsx";
 import MessageArea from "../components/MessageArea.jsx";
 import Welcome from "./Welcome.jsx";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 let socket;
 const Feed = () => {
   const [joinedGroups, setJoinedGroups] = useState([]);
 
-  const users = [{ name: "John Doe" }, { name: "Jane Smith" }];
+  // const users = [{ name: "John Doe" }, { name: "Jane Smith" }];
 
   useEffect(() => {
     const getJoinedGroup = async () => {
-      const res = await get("group/joined");
-
-      setJoinedGroups(res.data.groups);
+      try {
+        const res = await get("group/joined");
+        console.log(res);
+        setJoinedGroups(res.data.groups);
+      } catch (e) {
+        console.log(e.message);
+      }
     };
 
     getJoinedGroup();
@@ -40,10 +44,19 @@ const Feed = () => {
       );
     });
   }, []);
+  const location = useLocation();
+  const isFeed = location.pathname === "/feed";
+
   return (
     <div className="flex">
-      <Sidebar joinedGroups={joinedGroups} users={users} />
-      <Outlet joinedGroups={joinedGroups} />
+      {/* <Sidebar joinedGroups={joinedGroups} users={users} /> */}
+      <Sidebar joinedGroups={joinedGroups} />
+      <div className="flex-1 bg-red-500">
+        {isFeed && <Welcome />}
+        <Outlet context={{ joinedGroups }} />
+        {/* <Outlet context={{ joinedGroups, users }} /> */}
+        {/* <Outlet context={{ joinedGroups, users }} /> */}
+      </div>
     </div>
   );
 };

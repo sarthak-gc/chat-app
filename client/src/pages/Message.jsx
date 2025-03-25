@@ -8,26 +8,21 @@ const Message = () => {
   const { user } = location.state || {};
   const navigate = useNavigate();
   if (!user) {
-    console.error("No user provided");
-    navigate("/*");
+    // console.error("No user provided");
+    // navigate("/feed);
     return;
   }
-
   const isTyping = true;
+  console.log(isTyping);
   return (
-    <div className="flex w-[100vw] bg-black ">
-      <div className="w-96 flex-none">
-        <Sidebar />
-      </div>
-
-      <div className="h-screen flex flex-col w-full">
-        <UserNav
-          userId={user._id}
-          username={user.username}
-          isTyping={isTyping}
-        />
-        <ChatArea />
-      </div>
+    <div className="h-screen flex flex-col w-full">
+      <UserNav
+        userId={user._id}
+        // userId={"123"}
+        username={user.username}
+        isTyping={isTyping}
+      />
+      <ChatArea />
     </div>
   );
 };

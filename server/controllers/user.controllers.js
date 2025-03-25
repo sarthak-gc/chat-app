@@ -47,7 +47,7 @@ export const userRegistration = async (req, res) => {
       { username: newUser.username, id: newUser._id },
       JWT_SECRET,
       {
-        expiresIn: "1h",
+        expiresIn: "1d",
       }
     );
     res.status(201).json({
@@ -88,7 +88,7 @@ export const login = async (req, res) => {
     const token = jwt.sign(
       { username: user.username, id: user._id },
       JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "1d" }
     );
     res.json({
       status: "success",

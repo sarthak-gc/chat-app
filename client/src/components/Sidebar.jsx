@@ -73,7 +73,9 @@ const Sidebar = ({ joinedGroups }) => {
   }, [debouncedQuery]);
 
   const handleUserClick = (user) => {
-    navigate(`/message/user/${user.username}`, {
+    // console.log(user._id)
+    // /feed/users/:userId/message
+    navigate(`user/${user._id}/detail`, {
       state: {
         user,
       },
@@ -198,7 +200,7 @@ const Sidebar = ({ joinedGroups }) => {
         users.map((user) => {
           return (
             <div key={user._id} onClick={() => handleUserClick(user)}>
-              <div className="flex gap-4 p-2 h-16 text-[#A9B4C7] items-end ">
+              <div className="flex gap-4 p-2 h-16 text-[#A9B4C7] items-end hover:bg-[#24303f]">
                 <img
                   src={`https://robohash.org/${user._id}?set=set5&size=100x100`}
                   alt={user.username[0].toUpperCase()}

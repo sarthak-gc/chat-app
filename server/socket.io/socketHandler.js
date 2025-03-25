@@ -9,7 +9,7 @@ const userSockets = new Map();
 
 export const socketHandler = (io) => {
   io.on("connection", (socket) => {
-    console.log(`New client connected: ${socket.id}`);
+    console.log(`New client connected`);
 
     socket.on("login", async (token, socketId) => {
       try {
