@@ -1,20 +1,17 @@
 import React from "react";
-import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const UserDetailPage = () => {
-  const { joinedGroups } = useOutletContext();
   const location = useLocation();
   const { user } = location.state || {};
   const online = true;
-  console.log(user, " HI");
   const navigate = useNavigate();
   const handleSendMessage = () => {
     navigate(`/feed/user/${user._id}/message`, {
       state: {
-        user,
+        user: user,
       },
     });
-    console.log(user._id);
   };
   return (
     <div className="bg-[rgba(19,20,21)] w-full h-screen ">

@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import UserModel from "../models/user.model.js";
+import MessageModel from "../models/message.model.js";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -11,12 +12,12 @@ export const socketHandler = (io) => {
   io.on("connection", (socket) => {
     console.log(`New client connected`);
 
-    socket.on("login", async (token, socketId) => {
+    socket.on("login", async (token) => {
       try {
         const decodedToken = jwt.verify(token, JWT_SECRET);
 
         const { username } = decodedToken;
-        const user = await UserModel.findOne({}).select("username");
+        const user = await UserModel.findOne({ username }).select("username");
 
         if (!user) {
           socket.emit("login-failure", "User not found");
@@ -27,16 +28,11 @@ export const socketHandler = (io) => {
         const { _id } = user;
         const userId = _id.toString();
 
-        userSockets.set(userId, socketId || socket.id);
+        userSockets.set(userId, socket.id);
 
         broadcastOnlineUser(io, username, true);
 
-        console.log(
-          "user connected : ",
-          userId,
-          "socket id : ",
-          socketId || socket.id
-        );
+        console.log("user connected : ", userId, "socket id : ", socket.id);
       } catch (e) {
         if (e instanceof jwt.TokenExpiredError) {
           console.log("Token has expired");
@@ -68,10 +64,8 @@ export const socketHandler = (io) => {
       broadcastGroupLeave(io, groupId, userId);
     });
 
-    socket.on("message", (message) => {
-      console.log(message);
-      socket.emit("message", "LESSS GOOOO");
-      broadcastNewMessage(io, message);
+    socket.on("message", (senderId, message, receiverId) => {
+      broadcastNewMessage(io, message, senderId, receiverId);
     });
 
     socket.on("logout", (userId) => {
@@ -98,8 +92,26 @@ const broadcastRemoveMessage = (io, messageId, groupId) => {
   io.to(groupId).emit("remove-message", messageId);
 };
 
-const broadcastNewMessage = (io, message) => {
-  io.emit("new-message", message);
+const broadcastNewMessage = async (io, message, senderId, receiverId) => {
+  const targetSocketId = userSockets.get(receiverId);
+  console.log(message);
+  console.log(senderId, " senderId");
+  if (targetSocketId) {
+    console.log(targetSocketId);
+    io.to(targetSocketId).emit("new-message", { message, senderId });
+    await MessageModel.create({
+      sender: senderId,
+      message,
+      receiver: receiverId,
+    });
+  } else {
+    console.log("Receiver is not online");
+    await MessageModel.create({
+      sender: senderId,
+      message,
+      receiver: receiverId,
+    });
+  }
 };
 
 const broadcastOnlineUser = (io, username, isOnline) => {

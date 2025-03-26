@@ -12,10 +12,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     try {
       e.preventDefault();
-      console.log(loginData);
       const res = await post(loginData, "user/login");
-      console.log(res.data.token);
-
       localStorage.setItem("token", res.data.token);
       if (res.status === "success") {
         navigate("/feed");

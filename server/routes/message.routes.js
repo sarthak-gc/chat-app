@@ -11,7 +11,9 @@ import {
 } from "../controllers/message.controllers.js";
 
 const messageRouter = express.Router();
+import authentication from "../middlewares/authentication.js";
 
+messageRouter.use(authentication);
 //send messages
 messageRouter.post("/:senderId/to/:receiverId", sendMessage);
 messageRouter.post("/:senderId/to/:groupId", sendGroupMessage);
@@ -23,7 +25,7 @@ messageRouter.delete("/:messageId/group/:groupId", deleteGroupMessage);
 // receive messages
 
 // get old messages for new users + while reloading
-messageRouter.get("/:groupId", getGroupMessages);
+messageRouter.get("/:groupId/group", getGroupMessages);
 messageRouter.get("/:senderId", getMessages);
 
 // mark as read here for new messages as fallback

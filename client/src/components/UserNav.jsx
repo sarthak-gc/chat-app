@@ -1,4 +1,4 @@
-const UserNav = ({ isTyping, username, userId }) => {
+const UserNav = ({ username, userId }) => {
   return (
     <nav className="bg-[#24303f] w-full  text-white min-h-26 px-12  flex   items-center ">
       <ul className="flex gap-4  items-center ">
@@ -11,7 +11,6 @@ const UserNav = ({ isTyping, username, userId }) => {
         </li>
         <div>
           <li>{username}</li>
-          <li>{isTyping ? "typing..." : ""}</li>
         </div>
       </ul>
     </nav>

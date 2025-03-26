@@ -1,23 +1,165 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import UserContext from "../context/UserDetails";
+import get from "../../utils/api/getRoutes";
 
-const ChatArea = () => {
+const ChatArea = ({ socket }) => {
+  const sender = useContext(UserContext);
+  const [messagesCollection, setMessagesCollection] = useState([]);
   const [message, setMessage] = useState("");
+  const location = useLocation();
+  const { user } = location.state || {};
+  const handleChange = (e) => {
+    setMessage(e.target.value);
+  };
+
+  useEffect(() => {
+    const getOldMessages = async () => {
+      // format :
+      // createdAt: "2025-03-26T15:21:06.774Z"
+      // message: "from sarthak1234 to testing"
+      // receiver: "67e200fd9b76a31b9c64b075"
+      // sender: "67e200659b76a31b9c64b06d"
+      // status: "Sent"
+      // updatedAt: "2025-03-26T15:21:06.774Z"
+      const res = await get(`message/${user._id}`);
+      setMessagesCollection(res.data.messages);
+    };
+    getOldMessages();
+  }, [user._id]);
+  useEffect(() => {
+    socket.on("connect", () => {
+      socket.emit("login", localStorage.getItem("token"), socket.id);
+    });
+
+    socket.on("new-message", (messageInfo) => {
+      setMessagesCollection((prev) => {
+        return [
+          ...prev,
+          {
+            message: messageInfo.message,
+            sender: messageInfo.sender,
+            receiver: sender.id,
+          },
+        ];
+      });
+    });
+
+    return () => {
+      if (socket) {
+        socket.off("connect");
+        socket.off("new-message");
+      }
+    };
+  }, [socket, sender.id]);
+
+  const handleMessageSend = () => {
+    const receiverId = user._id;
+    const senderId = sender.id;
+    socket.emit("message", senderId, message, receiverId);
+    setMessagesCollection((prev) => {
+      return [...prev, { message, sender: senderId, receiver: receiverId }];
+    });
+  };
+
   return (
     <div className="flex flex-col relative h-full ">
-      <div className="flex-grow  overflow-y-scroll p-4 bg-[#121d2b] ">
-        Old messages
+      <div className="flex-grow  overflow-y-scroll p-4 bg-[#121d2b]  text-white">
+        {messagesCollection.map((elem, index) => {
+          return (
+            <li
+              key={index}
+              className={`w-full flex ${
+                elem.sender === sender.id ? "justify-end" : "justify-start"
+              } mb-2 text-white`}
+            >
+              <div className="w-fit relative   ">
+                <div
+                  className={`relative px-3 py-1 rounded-2xl whitespace-pre-wrap break-words flex flex-col  ${
+                    elem.sender === sender.id ? "bg-[#486993]" : "bg-[#24303f]"
+                  } mb-2  `}
+                >
+                  <p
+                  // className={`w-3/4 p-3  rounded-lg whitespace-pre-wrap break-words ${
+                  >
+                    {elem.message}
+                  </p>
+                  <div className="flex  items-center">
+                    <span>79:38</span>
+                    {elem.status === "Sent" && (
+                      <span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          width="36"
+                          height="20"
+                          fill="rgb(158,179,201)"
+                        >
+                          <path d="M9.9997 15.1709L19.1921 5.97852L20.6063 7.39273L9.9997 17.9993L3.63574 11.6354L5.04996 10.2212L9.9997 15.1709Z"></path>
+                        </svg>
+                      </span>
+                    )}
+                    {elem.status === "Delivered" && (
+                      <span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          width="36"
+                          height="20"
+                          fill="rgb(158,179,201)"
+                        >
+                          <path d="M11.602 13.7599L13.014 15.1719L21.4795 6.7063L22.8938 8.12051L13.014 18.0003L6.65 11.6363L8.06421 10.2221L10.189 12.3469L11.6025 13.7594L11.602 13.7599ZM11.6037 10.9322L16.5563 5.97949L17.9666 7.38977L13.014 12.3424L11.6037 10.9322ZM8.77698 16.5873L7.36396 18.0003L1 11.6363L2.41421 10.2221L3.82723 11.6352L3.82604 11.6363L8.77698 16.5873Z"></path>
+                        </svg>
+                      </span>
+                    )}
+                    {elem.status === "Read" && (
+                      <span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          height="20"
+                          width="36"
+                          fill="rgb(70,131,197)"
+                        >
+                          <path d="M11.602 13.7599L13.014 15.1719L21.4795 6.7063L22.8938 8.12051L13.014 18.0003L6.65 11.6363L8.06421 10.2221L10.189 12.3469L11.6025 13.7594L11.602 13.7599ZM11.6037 10.9322L16.5563 5.97949L17.9666 7.38977L13.014 12.3424L11.6037 10.9322ZM8.77698 16.5873L7.36396 18.0003L1 11.6363L2.41421 10.2221L3.82723 11.6352L3.82604 11.6363L8.77698 16.5873Z"></path>
+                        </svg>
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div
+                  className={`w-4 h-4 bg-transparent absolute  bottom-4 ${
+                    elem.sender === sender.id
+                      ? "-right-1  rotate-60"
+                      : "-left-1 rotate-[-60deg]"
+                  }`}
+                >
+                  <div
+                    className={`w-full h-full ${
+                      elem.sender === sender.id
+                        ? "bg-[hsl(214,34%,43%)]"
+                        : "bg-[#24303f]"
+                    }`}
+                  />
+                </div>
+              </div>
+            </li>
+          );
+        })}
       </div>
       <div className="flex items-center bg-[#3a4b5c] text-white bottom-0  absolute  w-full ">
         <textarea
           onChange={(e) => {
-            setMessage(e.target.value);
+            handleChange(e);
           }}
           placeholder="Type a message..."
           className="w-full p-3 resize-none outline-none h-14"
           rows="1"
         />
-
-        <button className=" text-white px-6 py-2 rounded-lg ml-4 hover:bg-[#121d2b]">
+        <button
+          className="px-6 py-2 rounded-lg ml-4 hover:bg-[#121d2b]"
+          onClick={handleMessageSend}
+        >
           {message && (
             <svg
               className="w-6 h-6"

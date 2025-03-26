@@ -22,7 +22,7 @@ const useDebounce = (value, delay) => {
 };
 
 const Sidebar = ({ joinedGroups }) => {
-  const username = useContext(UserContext);
+  const user = useContext(UserContext);
 
   const { currentPage } = useContext(CurrentPageContext);
   const [isLoading, setIsLoading] = useState("");
@@ -73,8 +73,6 @@ const Sidebar = ({ joinedGroups }) => {
   }, [debouncedQuery]);
 
   const handleUserClick = (user) => {
-    // console.log(user._id)
-    // /feed/users/:userId/message
     navigate(`user/${user._id}/detail`, {
       state: {
         user,
@@ -217,7 +215,7 @@ const Sidebar = ({ joinedGroups }) => {
         groups.map((group) => {
           if (group.members) {
             const isMember = group.members.filter((elem) => {
-              return elem.username === username.username && elem;
+              return elem.username === user.username && elem;
             });
 
             if (isMember.length > 0) {

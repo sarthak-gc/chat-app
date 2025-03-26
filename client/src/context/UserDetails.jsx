@@ -3,19 +3,23 @@ import { jwtDecode } from "jwt-decode";
 
 const UserContext = createContext();
 export const UserDetails = ({ children }) => {
-  const [username, setUsername] = useState("");
+  const [user, setUser] = useState({
+    username: "",
+    id: "",
+  });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       const decoded = jwtDecode(token);
-      setUsername(decoded.username);
+      setUser({
+        username: decoded.username,
+        id: decoded.id,
+      });
     }
   }, []);
 
-  return (
-    <UserContext.Provider value={{ username }}>{children}</UserContext.Provider>
-  );
+  return <UserContext.Provider value={user}>{children}</UserContext.Provider>;
 };
 
 export default UserContext;

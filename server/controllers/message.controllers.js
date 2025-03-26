@@ -333,8 +333,13 @@ export const getMessages = async (req, res) => {
   }
   try {
     const messages = await MessageModel.find({
-      sender: senderId,
-      receiver: receiverId,
+      $or: [
+        { sender: senderId, receiver: receiverId },
+        {
+          sender: receiverId,
+          receiver: senderId,
+        },
+      ],
     });
 
     if (messages.length === 0) {
