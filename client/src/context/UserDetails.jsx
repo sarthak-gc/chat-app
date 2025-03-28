@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
 const UserContext = createContext();
+
 export const UserDetails = ({ children }) => {
   const [user, setUser] = useState({
     username: "",

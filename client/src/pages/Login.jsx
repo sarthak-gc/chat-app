@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import iconPath from "../../assets/icon.svg";
 import post from "../../utils/api/postRoutes";
@@ -9,6 +9,9 @@ const Login = () => {
     password: "",
   });
   const navigate = useNavigate();
+  useEffect(() => {
+    localStorage.removeItem("token");
+  }, []);
   const handleLogin = async (e) => {
     try {
       e.preventDefault();

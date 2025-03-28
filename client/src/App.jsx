@@ -36,10 +36,10 @@ const router = createBrowserRouter([
           { path: ":groupId/details", element: <GroupDetails /> },
         ],
       },
-      { path: "user/:userId/detail", element: <UserDetailPage /> },
+      { path: "users/:userId/detail", element: <UserDetailPage /> },
 
       { path: "settings", element: <Settings /> },
-      { path: "user/:userId/message", element: <Message /> },
+      { path: "users/:userId/message", element: <Message /> },
     ],
   },
   { path: "/testing", element: <MessageArea /> },

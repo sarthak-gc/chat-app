@@ -94,10 +94,8 @@ const broadcastRemoveMessage = (io, messageId, groupId) => {
 
 const broadcastNewMessage = async (io, message, senderId, receiverId) => {
   const targetSocketId = userSockets.get(receiverId);
-  console.log(message);
-  console.log(senderId, " senderId");
+  console.log(targetSocketId + " targetedId");
   if (targetSocketId) {
-    console.log(targetSocketId);
     io.to(targetSocketId).emit("new-message", { message, senderId });
     await MessageModel.create({
       sender: senderId,

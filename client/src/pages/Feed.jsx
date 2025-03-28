@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import get from "../../utils/api/getRoutes.js";
 import socket from "../socket.js";
 
@@ -6,9 +6,11 @@ import Sidebar from "../components/Sidebar.jsx";
 // import MessageArea from "../components/MessageArea.jsx";
 import Welcome from "./Welcome.jsx";
 import { Outlet, useLocation } from "react-router-dom";
+import UserContext from "../context/UserDetails.jsx";
 const Feed = () => {
+  const user = useContext(UserContext);
   const [joinedGroups, setJoinedGroups] = useState([]);
-  // const users = [{ name: "John Doe" }, { name: "Jane Smith" }];
+  const [chattedUsers, setChattedUsers] = useState([]);
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -28,15 +30,28 @@ const Feed = () => {
       }
     };
 
-    getJoinedGroup();
+    const getChattedUser = async () => {
+      try {
+        console.log(user);
+        const res = await get("message/messages/history");
+        console.log(res.data.uniqueUsersList);
+        setChattedUsers(res.data.uniqueUsersList);
+      } catch (e) {
+        console.log(e.message);
+      }
+    };
+
+    getChattedUser();
+    getJoinedGroup;
   }, []);
 
   const location = useLocation();
   const isFeed = location.pathname === "/feed";
   return (
-    <div className="flex">
-      <Sidebar joinedGroups={joinedGroups} />
-      <div className="flex-1 bg-red-500">
+    <div className="flex w-full h-screen overflow-hidden">
+      <Sidebar joinedGroups={joinedGroups} chattedUsers={chattedUsers} />
+
+      <div className="flex-1 ">
         {isFeed && <Welcome />}
         <Outlet context={{ joinedGroups, socket }} />
       </div>

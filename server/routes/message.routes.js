@@ -8,6 +8,7 @@ import {
   getMessages,
   getNewGroupMessages,
   getNewMessage,
+  getPastMessages,
 } from "../controllers/message.controllers.js";
 
 const messageRouter = express.Router();
@@ -33,5 +34,7 @@ messageRouter.get("/:senderId", getMessages);
 
 messageRouter.get("/:groupId/new", getNewGroupMessages);
 messageRouter.get("/:senderId/new", getNewMessage);
+
+messageRouter.get("/messages/history", getPastMessages);
 
 export default messageRouter;

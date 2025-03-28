@@ -20,6 +20,7 @@ const get = async (route, params) => {
         err.response?.data?.message || "An error occurred while fetching data."
       );
     } else {
+      console.log(err);
       throw new Error("An unknown error occurred while fetching data.");
     }
   }

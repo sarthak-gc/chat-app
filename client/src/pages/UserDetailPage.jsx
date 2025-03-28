@@ -7,7 +7,7 @@ const UserDetailPage = () => {
   const online = true;
   const navigate = useNavigate();
   const handleSendMessage = () => {
-    navigate(`/feed/user/${user._id}/message`, {
+    navigate(`/feed/users/${user._id}/message`, {
       state: {
         user: user,
       },

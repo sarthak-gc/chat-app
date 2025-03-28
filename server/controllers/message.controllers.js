@@ -475,3 +475,35 @@ export const getNewMessage = async (req, res) => {
     res.status(500).json({ status: "error", message: "Internal Error" });
   }
 };
+
+export const getPastMessages = async (req, res) => {
+  const uniqueUsers = new Set();
+
+  const allMessages = await MessageModel.find({
+    $or: [{ sender: req.id }, { receiver: req.id }],
+  })
+    .populate("sender", "username")
+    .populate("receiver", "username");
+
+  allMessages.forEach((message) => {
+    uniqueUsers.add(message.sender._id.toString());
+    uniqueUsers.add(message.receiver._id.toString());
+  });
+
+  const uniqueUsersList = await UserModel.find({
+    _id: { $in: Array.from(uniqueUsers) },
+  });
+
+  const formattedUsers = uniqueUsersList.map((user) => ({
+    _id: user._id.toString(),
+    username: user.username,
+  }));
+
+  const pastUsers = formattedUsers.filter((elem) => elem._id !== req.id);
+
+  res.json({
+    data: {
+      uniqueUsersList: pastUsers,
+    },
+  });
+};
