@@ -63,9 +63,6 @@ const ChatArea = ({ socket }) => {
     };
   }, [socket, sender.id]);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messagesCollection]);
   const handleMessageSend = () => {
     const receiverId = user._id;
     const senderId = sender.id;
@@ -81,8 +78,8 @@ const ChatArea = ({ socket }) => {
   };
 
   return (
-    <div className="flex flex-col relative h-[calc(100%-104px)] pb-14 ">
-      <div className="flex-grow  overflow-y-scroll p-4 bg-[#121d2b]  text-white h-[calc(100% - 14)]">
+    <div className="flex flex-col relative h-[calc(100%-104px)] pb-14 bg-red-500">
+      <div className="flex-grow overflow-auto  p-4 bg-[#121d2b]  text-white ">
         {messagesCollection.map((elem, index) => {
           const isLastMessage = index === messagesCollection.length - 1;
           return (

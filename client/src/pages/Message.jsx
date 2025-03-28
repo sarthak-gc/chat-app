@@ -14,7 +14,7 @@ const Message = () => {
   }
 
   return (
-    <div className="h-screen flex flex-col w-full ">
+    <div className="h-screen flex flex-col w-full bg-red-500">
       <UserNav userId={user._id} username={user.username} />
       <ChatArea socket={socket} receiver={user} />
     </div>
