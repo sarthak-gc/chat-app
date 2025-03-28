@@ -206,7 +206,7 @@ const Sidebar = ({ joinedGroups, chattedUsers }) => {
       )}
 
       {currentPage === "users" && showChattedUser && (
-        <div className="pb-40  overflow-scroll h-screen">
+        <div className="overflow-scroll h-[calc(100% - 104px)">
           {chattedUsers.map((chattedUser) => (
             <UserItem
               key={chattedUser._id}
@@ -218,7 +218,7 @@ const Sidebar = ({ joinedGroups, chattedUsers }) => {
       )}
 
       {users.length > 0 && !showChattedUser && (
-        <div className="pb-40 overflow-scroll h-screen">
+        <div className="overflow-scroll h-[calc(100% - 104px)">
           {users.map((user) => (
             <UserItem
               key={user._id}
@@ -239,7 +239,7 @@ const Sidebar = ({ joinedGroups, chattedUsers }) => {
       )}
 
       {groups.length > 0 && (
-        <div className="pb-40 overflow-scroll h-screen">
+        <div className="overflow-scroll h-[calc(100% - 104px)">
           {groups.map((group) => (
             <GroupItem
               key={group._id}

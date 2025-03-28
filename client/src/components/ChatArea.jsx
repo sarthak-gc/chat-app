@@ -66,6 +66,12 @@ const ChatArea = ({ socket }) => {
   const handleMessageSend = () => {
     const receiverId = user._id;
     const senderId = sender.id;
+    if (!message.trim()) {
+      console.log("no message");
+      setMessage("");
+
+      return;
+    }
     socket.emit("message", senderId, message, receiverId);
 
     setMessagesCollection((prev) => {
@@ -76,6 +82,32 @@ const ChatArea = ({ socket }) => {
     });
     setMessage("");
   };
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messagesCollection]);
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      textareaRef.current.focus();
+
+      if (e.key === "Escape") {
+        textareaRef.current.blur();
+        return;
+      }
+
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleMessageSend();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyPress);
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [message]);
 
   return (
     <div className="flex flex-col relative h-[calc(100%-104px)] pb-14 bg-red-500">
