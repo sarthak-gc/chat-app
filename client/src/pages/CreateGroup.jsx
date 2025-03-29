@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
 
 const CreateGroup = () => {
@@ -19,7 +19,7 @@ const CreateGroup = () => {
   return (
     <>
       {/* <Sidebar /> */}
-      <div>CreateGroup</div>;
+      <div>CreateGroup</div>
     </>
   );
 };

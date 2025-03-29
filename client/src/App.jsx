@@ -15,6 +15,7 @@ import GroupDetails from "./components/GroupDetails";
 import { UserDetails } from "./context/UserDetails";
 import UserDetailPage from "./pages/UserDetailPage";
 import MessageArea from "./components/MessageArea";
+import GroupDetailPage from "./pages/GroupDetailPage";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login />, errorElement: <PageNotFound /> },
@@ -31,15 +32,16 @@ const router = createBrowserRouter([
       {
         path: "groups",
         element: <GroupPage />,
-        children: [
-          { path: "create", element: <CreateGroup /> },
-          { path: ":groupId/details", element: <GroupDetails /> },
-        ],
       },
+
+      { path: "groups/create", element: <CreateGroup /> },
+      { path: ":groups/:groupId/detail", element: <GroupDetailPage /> },
+
       { path: "users/:userId/detail", element: <UserDetailPage /> },
 
       { path: "settings", element: <Settings /> },
       { path: "users/:userId/message", element: <Message /> },
+      { path: "groups/:groupId/message", element: <Message /> },
     ],
   },
   { path: "/testing", element: <MessageArea /> },

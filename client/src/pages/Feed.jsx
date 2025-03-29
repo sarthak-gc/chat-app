@@ -32,9 +32,7 @@ const Feed = () => {
 
     const getChattedUser = async () => {
       try {
-        console.log(user);
         const res = await get("message/messages/history");
-        console.log(res.data.uniqueUsersList);
         setChattedUsers(res.data.uniqueUsersList);
       } catch (e) {
         console.log(e.message);
@@ -42,7 +40,7 @@ const Feed = () => {
     };
 
     getChattedUser();
-    getJoinedGroup;
+    getJoinedGroup();
   }, []);
 
   const location = useLocation();

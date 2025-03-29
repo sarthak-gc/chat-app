@@ -21,7 +21,7 @@ const useDebounce = (value, delay) => {
   return debouncedValue;
 };
 
-const SearchInput = ({ searchQuery, setSearchQuery, setShowChattedUser }) => (
+const SearchInput = ({ searchQuery, setSearchQuery, setDisplay }) => (
   <span>
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -39,9 +39,9 @@ const SearchInput = ({ searchQuery, setSearchQuery, setShowChattedUser }) => (
     </svg>
     <input
       onBlur={() => {
-        if (!searchQuery) setShowChattedUser(true);
+        if (!searchQuery) setDisplay(true);
       }}
-      onFocus={() => setShowChattedUser(false)}
+      onFocus={() => setDisplay(false)}
       type="search"
       className="bg-[#24303f] w-full py-2 placeholder:text-[#848fa2] placeholder:text-center outline-none text-white pl-4 pr-10"
       placeholder="Search"
@@ -91,6 +91,7 @@ const Sidebar = ({ joinedGroups, chattedUsers }) => {
   const [isLoading, setIsLoading] = useState("");
   const [users, setUsers] = useState([]);
   const [groups, setGroups] = useState([]);
+  const [showJoinedGroups, setShowJoinedGroups] = useState(true);
 
   const debouncedQuery = useDebounce(searchQuery, 500);
   useEffect(() => {
@@ -146,12 +147,11 @@ const Sidebar = ({ joinedGroups, chattedUsers }) => {
       alert("This group is private. Only members can view the contents.");
       return;
     }
-    navigate(`/details/group/${group._id}`, { state: { group } });
+    navigate(`groups/${group._id}/detail`, { state: { group } });
   };
 
   const handleGroupCreate = () => {
     navigate("groups/create");
-    prompt("Enter group name");
   };
 
   return (
@@ -188,13 +188,14 @@ const Sidebar = ({ joinedGroups, chattedUsers }) => {
           <SearchInput
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
-            setShowChattedUser={setShowChattedUser}
+            setDisplay={
+              currentPage === "users" ? setShowChattedUser : setShowJoinedGroups
+            }
           />
         )}
       </div>
-
-      {currentPage === "groups" && (
-        <div className="space-y-4 p-4">
+      {currentPage === "groups" && showJoinedGroups && (
+        <div className="overflow-scroll h-[calc(100% - 104px)">
           {joinedGroups.map((group) => (
             <GroupItem
               key={group._id}
@@ -229,7 +230,7 @@ const Sidebar = ({ joinedGroups, chattedUsers }) => {
         </div>
       )}
 
-      {users.length === 0 && !showChattedUser && (
+      {users.length === 0 && !showChattedUser && currentPage === "users" && (
         <div className="w-full text-white h-1/2 items-center flex justify-center">
           <span>{!searchQuery && "Search User"}</span>
           <span>
@@ -238,7 +239,7 @@ const Sidebar = ({ joinedGroups, chattedUsers }) => {
         </div>
       )}
 
-      {groups.length > 0 && (
+      {groups.length > 0 && !showJoinedGroups && (
         <div className="overflow-scroll h-[calc(100% - 104px)">
           {groups.map((group) => (
             <GroupItem
@@ -247,6 +248,15 @@ const Sidebar = ({ joinedGroups, chattedUsers }) => {
               handleGroupClick={handleGroupClick}
             />
           ))}
+        </div>
+      )}
+
+      {groups.length === 0 && !showJoinedGroups && currentPage === "groups" && (
+        <div className="w-full text-white h-1/2 items-center flex justify-center">
+          <span>{!searchQuery && "Search Group"}</span>
+          <span>
+            {searchQuery && (isLoading ? <Loader /> : "No group found")}
+          </span>
         </div>
       )}
 

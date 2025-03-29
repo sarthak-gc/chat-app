@@ -42,17 +42,18 @@ const ChatArea = ({ socket }) => {
     });
 
     socket.on("new-message", (messageInfo) => {
-      setMessagesCollection((prev) => {
-        return [
-          ...prev,
-          {
-            message: messageInfo.message,
-            sender: messageInfo.sender,
-            receiver: sender.id,
-            status: "Sent",
-          },
-        ];
-      });
+      if (messageInfo.senderId === user._id)
+        setMessagesCollection((prev) => {
+          return [
+            ...prev,
+            {
+              message: messageInfo.message,
+              sender: messageInfo.senderId,
+              receiver: sender.id,
+              status: "Sent",
+            },
+          ];
+        });
     });
 
     return () => {
@@ -90,8 +91,6 @@ const ChatArea = ({ socket }) => {
   }, [messagesCollection]);
   useEffect(() => {
     const handleKeyPress = (e) => {
-      textareaRef.current.focus();
-
       if (e.key === "Escape") {
         textareaRef.current.blur();
         return;
