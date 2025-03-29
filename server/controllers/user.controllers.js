@@ -144,3 +144,22 @@ export const searchUser = async (req, res) => {
     });
   }
 };
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await UserModel.find({}).select("-password");
+    res.status(200).json({
+      status: "success",
+      message: "Users Retrieved successfully",
+      data: {
+        users,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to search users. Try again",
+    });
+  }
+};

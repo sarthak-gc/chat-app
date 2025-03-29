@@ -29,7 +29,7 @@ const SearchInput = ({ searchQuery, setSearchQuery, setDisplay }) => (
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="size-6 absolute transform right-5 top-16/29 text-[#848fa2]"
+      className="size-6 absolute transform right-10 top-16/30 text-[#848fa2]"
     >
       <path
         strokeLinecap="round"
@@ -165,7 +165,7 @@ const Sidebar = ({ joinedGroups, chattedUsers }) => {
         {currentPage === "groups" && (
           <span
             onClick={handleGroupCreate}
-            className="absolute top-0 right-10  hover:bg-[#24303f] w-7 h-7 flex items-center justify-center rounded-full cursor-pointer"
+            className="absolute top-3.5 right-10   hover:bg-[#24303f] flex items-center justify-center rounded-full cursor-pointer text-white"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -173,12 +173,12 @@ const Sidebar = ({ joinedGroups, chattedUsers }) => {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="size-5"
+              className="size-6"
             >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z"
+                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
               />
             </svg>
           </span>
