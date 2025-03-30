@@ -149,8 +149,10 @@ const ChatArea = () => {
             >
               <div className="w-fit relative   ">
                 <div
-                  className={`relative px-3 py-1 rounded-2xl whitespace-pre-wrap break-words flex flex-col  ${
-                    elem.sender === sender.id ? "bg-[#486993]" : "bg-[#24303f]"
+                  className={`relative  py-1 rounded-2xl whitespace-pre-wrap break-words flex flex-col  ${
+                    elem.sender === sender.id
+                      ? "bg-[#486993] pl-5"
+                      : "bg-[#24303f] pl-5"
                   } mb-2  `}
                 >
                   <p>{elem.message}</p>

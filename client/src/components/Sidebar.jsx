@@ -147,7 +147,7 @@ const Sidebar = ({ joinedGroups, chattedUsers, socket, setChattedUsers }) => {
     //   alert("This group is private. Only members can view the contents.");
     //   return;
     // }
-    navigate(`groups/${group._id}/detail`, { state: { group } });
+    navigate(`groups/${group._id}/message`, { state: { group } });
   };
 
   const handleGroupCreate = () => {

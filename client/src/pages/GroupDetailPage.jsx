@@ -1,21 +1,27 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const UserItem = ({ user, creator }) => (
-  <div key={user._id} className="w-full ">
-    <div className="flex gap-4 p-2 h-16 text-[#A9B4C7] items-end bg-[#1a222c] w-full">
-      <img
-        src={`https://robohash.org/${user._id}?set=set5&size=100x100`}
-        alt={user.username[0].toUpperCase()}
-        className="w-8 h-8 rounded-full"
-      />
-      <div className="border-b border-[#dadada58] w-full pb-2 flex justify-between pr-8">
-        <span>{user.username}</span>
-        {creator && <span>admin</span>}
+const UserItem = ({ user, creator }) => {
+  const navigate = useNavigate();
+  return (
+    <div key={user._id} className="w-full">
+      <div className="flex gap-4 p-2 h-16 text-[#A9B4C7] items-end bg-[#1a222c] w-full">
+        <img
+          src={`https://robohash.org/${user._id}?set=set5&size=100x100`}
+          alt={user.username[0].toUpperCase()}
+          className="w-8 h-8 rounded-full"
+          onClick={() => {
+            navigate(`/feed/users/${user._id}/detail`, { state: { user } });
+          }}
+        />
+        <div className="border-b border-[#dadada58] w-full pb-2 flex justify-between pr-8">
+          <span>{user.username}</span>
+          {creator._id === user._id && <span>admin</span>}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const GroupDetailPage = () => {
   const location = useLocation();
@@ -151,17 +157,25 @@ const GroupDetailPage = () => {
                 <UserItem
                   key={group.creator._id}
                   user={group.creator}
-                  creator={true}
+                  creator={group.creator}
                 />
               )}
               {(toShow === "members" || toShow === "all") &&
-                group.members.map((member) => {
-                  return (
-                    <li>
-                      <UserItem key={member._id} user={member} />
-                    </li>
-                  );
-                })}
+                group.members
+                  .filter((member) => {
+                    return member._id !== group.creator._id;
+                  })
+                  .map((member) => {
+                    return (
+                      <li>
+                        <UserItem
+                          creator={group.creator}
+                          key={member._id}
+                          user={member}
+                        />
+                      </li>
+                    );
+                  })}
             </ul>
           </div>
         </div>

@@ -11,10 +11,10 @@ import GroupPage from "./pages/GroupPage";
 import UserPage from "./pages/UserPage";
 import Settings from "./pages/Settings";
 import Message from "./pages/Message";
-import GroupDetails from "./components/GroupDetails";
+
 import { UserDetails } from "./context/UserDetails";
 import UserDetailPage from "./pages/UserDetailPage";
-import MessageArea from "./components/MessageArea";
+
 import GroupDetailPage from "./pages/GroupDetailPage";
 
 const router = createBrowserRouter([
@@ -44,7 +44,6 @@ const router = createBrowserRouter([
       { path: "groups/:groupId/message", element: <Message /> },
     ],
   },
-  { path: "/testing", element: <MessageArea /> },
 ]);
 
 const App = () => {

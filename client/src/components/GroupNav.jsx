@@ -24,7 +24,7 @@ const GroupNav = ({ groupname, groupId }) => {
         <span
           className=" flex items-center justify-center"
           onClick={() => {
-            navigate(`/feed/groups/${group.id}/detail`, { state: { group } });
+            navigate(`/feed/groups/${group._id}/detail`, { state: { group } });
           }}
         >
           <svg

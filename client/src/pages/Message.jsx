@@ -2,7 +2,7 @@ import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import UserNav from "../components/UserNav";
 import ChatArea from "../components/ChatArea";
 import GroupNav from "../components/GroupNav";
-// import GroupChatArea from "../components/GroupChatArea";
+import GroupChatArea from "../components/GroupChatArea";
 
 const Message = () => {
   const { socket, setChattedUsers, chattedUsers } = useOutletContext();
@@ -18,7 +18,7 @@ const Message = () => {
   return (
     <div className="h-screen flex flex-col w-full">
       {group && <GroupNav groupId={group._id} groupname={group.groupName} />}
-      {/* {group && <GroupChatArea />} */}
+      {group && <GroupChatArea />}
       {user && <UserNav userId={user._id} username={user.username} />}
       {user && (
         <ChatArea

@@ -292,10 +292,10 @@ export const getGroupMessages = async (req, res) => {
     }
 
     const messages = await MessageModel.find({ group: groupId })
-      .select("senderId group readBy message")
-      .populate("senderId", "userName")
+      .select("sender group readBy message")
+      .populate("sender", "username")
       .populate("group", "groupName")
-      .populate("readBy", "userName");
+      .populate("readBy", "username");
 
     if (messages.length == 0) {
       return res.json({
@@ -487,7 +487,9 @@ export const getPastMessages = async (req, res) => {
 
   allMessages.forEach((message) => {
     uniqueUsers.add(message.sender._id.toString());
-    uniqueUsers.add(message.receiver._id.toString());
+    if (message.receiver) {
+      uniqueUsers.add(message.receiver._id.toString());
+    }
   });
 
   const uniqueUsersList = await UserModel.find({

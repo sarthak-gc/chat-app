@@ -155,7 +155,6 @@ export const getMembers = async (req, res) => {
     }
 
     const members = [group.creator, ...group.members];
-    console.log(members);
     res.json({
       status: "success",
       message: "Members Retrieved successfully",

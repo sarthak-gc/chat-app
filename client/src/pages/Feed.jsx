@@ -3,12 +3,12 @@ import get from "../../utils/api/getRoutes.js";
 import socket from "../socket.js";
 
 import Sidebar from "../components/Sidebar.jsx";
-// import MessageArea from "../components/MessageArea.jsx";
 import Welcome from "./Welcome.jsx";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 const Feed = () => {
   const [joinedGroups, setJoinedGroups] = useState([]);
   const [chattedUsers, setChattedUsers] = useState([]);
+  const navigate = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -32,9 +32,11 @@ const Feed = () => {
       try {
         const res = await get("message/messages/history");
         setChattedUsers(res.data.uniqueUsersList);
-        console.log(res.data.uniqueUsersList);
       } catch (e) {
         console.log(e.message);
+        if (e.message === "User Not Found") {
+          navigate("/login");
+        }
       }
     };
 
@@ -55,8 +57,15 @@ const Feed = () => {
 
       <div className="flex-1 ">
         {isFeed && <Welcome />}
+
         <Outlet
-          context={{ joinedGroups, socket, setChattedUsers, chattedUsers }}
+          context={{
+            joinedGroups,
+            socket,
+            setChattedUsers,
+            chattedUsers,
+            setJoinedGroups,
+          }}
         />
       </div>
     </div>

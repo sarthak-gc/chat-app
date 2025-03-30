@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import get from "../../utils/api/getRoutes";
 import post from "../../utils/api/postRoutes";
 import UserContext from "../context/UserDetails";
@@ -42,10 +43,12 @@ const UserItem = ({ user, handleUserClick, isChecked }) => {
 const CreateGroup = () => {
   const [groupName, setGroupName] = useState("");
   const creator = useContext(UserContext);
+  const { socket, setJoinedGroups } = useOutletContext();
   const [users, setUsers] = useState([]);
   const [checkedUsers, setCheckedUsers] = useState({});
   const [filterQuery, setFilterQuery] = useState("");
   const searchInpRef = useRef(null);
+  const navigate = useNavigate();
   const handleUserClick = (user) => {
     setCheckedUsers((prev) => ({
       ...prev,
@@ -88,9 +91,24 @@ const CreateGroup = () => {
         "group/create"
       );
       if (res.status === "success") {
+        const { group } = res.data;
         setCheckedUsers({});
         setGroupName("");
-        // to group page with the members added and the creator
+
+        setJoinedGroups((prev) => [
+          ...prev,
+          {
+            _id: group._id,
+            groupName: group.groupName,
+            visibility: "Public",
+          },
+        ]);
+        socket.emit("group-create", selectedMembers);
+        navigate(`/feed/groups/${group._id}/message`, {
+          state: {
+            group: group,
+          },
+        });
       }
     } catch (e) {
       console.error(e);

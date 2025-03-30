@@ -7,7 +7,7 @@ dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const userSockets = new Map();
-
+const groupSockets = new Map();
 export const socketHandler = (io) => {
   io.on("connection", (socket) => {
     console.log(`New client connected`);
@@ -45,9 +45,15 @@ export const socketHandler = (io) => {
       }
     });
 
-    socket.on("join-group", (groupId, userId) => {
+    socket.on("group-click", (groupId, userId) => {
       socket.join(groupId);
-      handleGroupJoin(io, groupId, userId);
+
+      if (!groupSockets.has(groupId)) {
+        groupSockets.set(groupId, new Set());
+      }
+
+      groupSockets.get(groupId).add(userId);
+
       broadcastGroupJoin(io, groupId, userId);
     });
 
@@ -59,6 +65,13 @@ export const socketHandler = (io) => {
       broadcastRemoveMessage(io, messageId, groupId);
     });
 
+    socket.on("group-create", (members) => {
+      console.log(members);
+    });
+    socket.on("join-group", (groupId, userId) => {
+      socket.leave(groupId);
+      broadcastGroupLeave(io, groupId, userId);
+    });
     socket.on("leave-group", (groupId, userId) => {
       socket.leave(groupId);
       broadcastGroupLeave(io, groupId, userId);
@@ -79,14 +92,18 @@ export const socketHandler = (io) => {
   });
 };
 
-const handleGroupJoin = (io, groupId, userId) => {
-  io.to(groupId).emit("user-joined", { userId });
-};
+const handleGroupClick = (io, groupId, userId) => {};
 const broadcastGroupLeave = (io, groupId, userId) => {
   io.to(groupId).emit("user-left", { userId });
 };
-const broadcastGroupMessage = (io, message, groupId) => {
-  io.to(groupId).emit("new-message", message);
+const broadcastGroupMessage = async (io, sender, message, groupId) => {
+  io.to(groupId).emit("new-group-message", { sender, message, groupId });
+  await MessageModel.create({
+    sender: sender,
+    message,
+    group: groupId,
+    readBy: [],
+  });
 };
 
 const broadcastRemoveMessage = (io, messageId, groupId) => {
@@ -95,7 +112,6 @@ const broadcastRemoveMessage = (io, messageId, groupId) => {
 
 const broadcastNewMessage = async (io, message, sender, receiverId) => {
   const targetSocketId = userSockets.get(receiverId);
-  console.log(targetSocketId + " targetedId");
   if (targetSocketId) {
     io.to(targetSocketId).emit("new-message", { message, sender });
 
@@ -119,5 +135,5 @@ const broadcastOnlineUser = (io, username, isOnline) => {
 };
 
 const broadcastGroupJoin = (io, groupId, userId) => {
-  io.emit("group-join", { groupId, userId });
+  io.to(groupId).emit("user-joined", { userId });
 };
