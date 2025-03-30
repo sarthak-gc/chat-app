@@ -1,10 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+
+const UserItem = ({ user, creator }) => (
+  <div key={user._id} className="w-full ">
+    <div className="flex gap-4 p-2 h-16 text-[#A9B4C7] items-end bg-[#1a222c] w-full">
+      <img
+        src={`https://robohash.org/${user._id}?set=set5&size=100x100`}
+        alt={user.username[0].toUpperCase()}
+        className="w-8 h-8 rounded-full"
+      />
+      <div className="border-b border-[#dadada58] w-full pb-2 flex justify-between pr-8">
+        <span>{user.username}</span>
+        {creator && <span>admin</span>}
+      </div>
+    </div>
+  </div>
+);
 
 const GroupDetailPage = () => {
   const location = useLocation();
   const { group } = location.state || {};
   const online = true;
+  const [toShow, setToShow] = useState("all");
 
   const navigate = useNavigate();
   const handleSendMessage = () => {
@@ -15,7 +32,7 @@ const GroupDetailPage = () => {
     });
   };
   return (
-    <div className="bg-[rgba(19,20,21)] w-full h-screen ">
+    <div className="bg-[rgba(19,20,21)] w-full h-screen   scrollbar-none">
       {/* profile */}
       <div className="flex w-full items-center justify-center text-[#A9B4C7]  h-1/5 ">
         <div
@@ -35,7 +52,7 @@ const GroupDetailPage = () => {
         <span>
           {group.groupName[0].toUpperCase() + group.groupName.slice(1)}
         </span>
-        <span className="text-sm">
+        <span className="text-sm mt-5">
           {group.members.length + 1}{" "}
           {group.members.length > 0 ? "members" : "member"}
         </span>
@@ -43,7 +60,7 @@ const GroupDetailPage = () => {
 
       {/* contact info */}
 
-      <div className=" mt-20 flex justify-center   ">
+      <div className=" my-10 flex justify-center">
         <div className="flex  w-2/3 lg:w-1/3 justify-center gap-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -88,6 +105,65 @@ const GroupDetailPage = () => {
               d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
             />
           </svg>
+        </div>
+      </div>
+      <div className="text-white justify-center h-full pb-20">
+        <div className=" flex justify-center w-full ">
+          <div className="h-1/2 text-[#A9B4C7] bg-[#1a222c] w-5/6 md:w-1/3 rounded-t-xl">
+            <div className="border-b border-[#dadada58] w-full pt-6 flex justify-between px-10 ">
+              <span
+                className={`${
+                  toShow === "all"
+                    ? "text-[rgb(84,163,248)]  border-b-4  mb-4"
+                    : ""
+                } border-blue-500 min-w-1/10 w-fit text-center pb-1`}
+                onClick={() => setToShow("all")}
+              >
+                All
+              </span>
+              <span
+                className={`${
+                  toShow === "admin"
+                    ? "text-[rgb(84,163,248)]  border-b-4  mb-4"
+                    : ""
+                } border-blue-500 min-w-1/10 w-fit text-center pb-1`}
+                onClick={() => setToShow("admin")}
+              >
+                Admin
+              </span>
+              <span
+                className={`${
+                  toShow === "members"
+                    ? "text-[rgb(84,163,248)]  border-b-4  mb-4"
+                    : ""
+                } border-blue-500 min-w-1/10 w-fit text-center pb-1`}
+                onClick={() => setToShow("members")}
+              >
+                Members
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="h-full w-full flex  justify-center">
+          <div className="text-white bg overflow-scroll h-1/2 w-5/6 md:w-1/3 scrollbar-none">
+            <ul className="text-white flex flex-col  w-full">
+              {(toShow === "admin" || toShow === "all") && (
+                <UserItem
+                  key={group.creator._id}
+                  user={group.creator}
+                  creator={true}
+                />
+              )}
+              {(toShow === "members" || toShow === "all") &&
+                group.members.map((member) => {
+                  return (
+                    <li>
+                      <UserItem key={member._id} user={member} />
+                    </li>
+                  );
+                })}
+            </ul>
+          </div>
         </div>
       </div>
     </div>

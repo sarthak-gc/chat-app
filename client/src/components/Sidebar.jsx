@@ -143,10 +143,10 @@ const Sidebar = ({ joinedGroups, chattedUsers, socket, setChattedUsers }) => {
   };
 
   const handleGroupClick = (group) => {
-    if (group.visibility === "Private") {
-      alert("This group is private. Only members can view the contents.");
-      return;
-    }
+    // if (group.visibility === "Private") {
+    //   alert("This group is private. Only members can view the contents.");
+    //   return;
+    // }
     navigate(`groups/${group._id}/detail`, { state: { group } });
   };
 

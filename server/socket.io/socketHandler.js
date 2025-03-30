@@ -51,8 +51,8 @@ export const socketHandler = (io) => {
       broadcastGroupJoin(io, groupId, userId);
     });
 
-    socket.on("send-group-message", (message, groupId) => {
-      broadcastGroupMessage(io, message, groupId);
+    socket.on("send-group-message", (sender, message, groupId) => {
+      broadcastGroupMessage(io, sender, message, groupId);
     });
 
     socket.on("remove-group-message", (messageId, groupId) => {

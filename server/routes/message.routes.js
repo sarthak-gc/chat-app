@@ -26,7 +26,7 @@ messageRouter.delete("/:messageId/group/:groupId", deleteGroupMessage);
 // receive messages
 
 // get old messages for new users + while reloading
-messageRouter.get("/:groupId/group", getGroupMessages);
+messageRouter.get("/group/:groupId/", getGroupMessages);
 messageRouter.get("/:senderId", getMessages);
 
 // mark as read here for new messages as fallback

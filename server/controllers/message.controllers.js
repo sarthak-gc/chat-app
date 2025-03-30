@@ -298,7 +298,7 @@ export const getGroupMessages = async (req, res) => {
       .populate("readBy", "userName");
 
     if (messages.length == 0) {
-      res.json({
+      return res.json({
         status: "success",
         message: "Messages Retrieved Successfully",
         data: {
