@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useOutletContext } from "react-router-dom";
 import UserContext from "../context/UserDetails";
 import get from "../../utils/api/getRoutes";
 
-const ChatArea = ({ socket }) => {
+const ChatArea = () => {
   const textareaRef = useRef(null);
-
+  const { setChattedUsers, socket } = useOutletContext();
   const sender = useContext(UserContext);
   const [messagesCollection, setMessagesCollection] = useState([]);
   const [message, setMessage] = useState("");
@@ -42,18 +42,31 @@ const ChatArea = ({ socket }) => {
     });
 
     socket.on("new-message", (messageInfo) => {
-      if (messageInfo.senderId === user._id)
+      if (messageInfo.sender._id === user._id)
         setMessagesCollection((prev) => {
           return [
             ...prev,
             {
               message: messageInfo.message,
-              sender: messageInfo.senderId,
+              sender: messageInfo.sender.senderId,
               receiver: sender.id,
               status: "Sent",
             },
           ];
         });
+
+      const newUser = {
+        username: messageInfo.sender.username,
+        _id: messageInfo.sender._id,
+      };
+
+      setChattedUsers((prev) => {
+        const userExists = prev.some((user) => user._id === newUser._id);
+        if (!userExists) {
+          return [...prev, newUser];
+        }
+        return prev;
+      });
     });
 
     return () => {
@@ -74,6 +87,19 @@ const ChatArea = ({ socket }) => {
       return;
     }
     socket.emit("message", senderId, message, receiverId);
+
+    const newUser = {
+      username: user.username,
+      _id: receiverId,
+    };
+
+    setChattedUsers((prev) => {
+      const userExists = prev.some((user) => user._id === newUser._id);
+      if (!userExists) {
+        return [...prev, newUser];
+      }
+      return prev;
+    });
 
     setMessagesCollection((prev) => {
       return [
@@ -110,7 +136,7 @@ const ChatArea = ({ socket }) => {
 
   return (
     <div className="flex flex-col relative h-[calc(100%-104px)] pb-14 bg-red-500">
-      <div className="flex-grow overflow-auto  p-4 bg-[#121d2b]  text-white ">
+      <div className="flex-grow overflow-auto  p-4 bg-[#121d2b]  text-white scrollbar-none">
         {messagesCollection.map((elem, index) => {
           const isLastMessage = index === messagesCollection.length - 1;
           return (

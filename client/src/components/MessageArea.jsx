@@ -61,9 +61,8 @@
 // export default MessageArea;
 
 import React, { useEffect, useState } from "react";
-import socket from "../socket.js";
 
-const MessageArea = () => {
+const MessageArea = ({ socket }) => {
   const [message, setMessage] = useState("");
 
   useEffect(() => {

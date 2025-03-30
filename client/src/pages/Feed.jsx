@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import get from "../../utils/api/getRoutes.js";
 import socket from "../socket.js";
 
@@ -6,9 +6,7 @@ import Sidebar from "../components/Sidebar.jsx";
 // import MessageArea from "../components/MessageArea.jsx";
 import Welcome from "./Welcome.jsx";
 import { Outlet, useLocation } from "react-router-dom";
-import UserContext from "../context/UserDetails.jsx";
 const Feed = () => {
-  const user = useContext(UserContext);
   const [joinedGroups, setJoinedGroups] = useState([]);
   const [chattedUsers, setChattedUsers] = useState([]);
   useEffect(() => {
@@ -34,6 +32,7 @@ const Feed = () => {
       try {
         const res = await get("message/messages/history");
         setChattedUsers(res.data.uniqueUsersList);
+        console.log(res.data.uniqueUsersList);
       } catch (e) {
         console.log(e.message);
       }
@@ -47,11 +46,18 @@ const Feed = () => {
   const isFeed = location.pathname === "/feed";
   return (
     <div className="flex w-full h-screen overflow-hidden">
-      <Sidebar joinedGroups={joinedGroups} chattedUsers={chattedUsers} />
+      <Sidebar
+        joinedGroups={joinedGroups}
+        chattedUsers={chattedUsers}
+        socket={socket}
+        setChattedUsers={setChattedUsers}
+      />
 
       <div className="flex-1 ">
         {isFeed && <Welcome />}
-        <Outlet context={{ joinedGroups, socket }} />
+        <Outlet
+          context={{ joinedGroups, socket, setChattedUsers, chattedUsers }}
+        />
       </div>
     </div>
   );

@@ -64,8 +64,9 @@ export const socketHandler = (io) => {
       broadcastGroupLeave(io, groupId, userId);
     });
 
-    socket.on("message", (senderId, message, receiverId) => {
-      broadcastNewMessage(io, message, senderId, receiverId);
+    socket.on("message", async (senderId, message, receiverId) => {
+      const sender = await UserModel.findById(senderId).select("-password");
+      broadcastNewMessage(io, message, sender, receiverId);
     });
 
     socket.on("logout", (userId) => {
@@ -92,20 +93,21 @@ const broadcastRemoveMessage = (io, messageId, groupId) => {
   io.to(groupId).emit("remove-message", messageId);
 };
 
-const broadcastNewMessage = async (io, message, senderId, receiverId) => {
+const broadcastNewMessage = async (io, message, sender, receiverId) => {
   const targetSocketId = userSockets.get(receiverId);
   console.log(targetSocketId + " targetedId");
   if (targetSocketId) {
-    io.to(targetSocketId).emit("new-message", { message, senderId });
+    io.to(targetSocketId).emit("new-message", { message, sender });
+
     await MessageModel.create({
-      sender: senderId,
+      sender: sender._id,
       message,
       receiver: receiverId,
     });
   } else {
     console.log("Receiver is not online");
     await MessageModel.create({
-      sender: senderId,
+      sender: sender._id,
       message,
       receiver: receiverId,
     });

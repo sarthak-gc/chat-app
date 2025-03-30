@@ -81,7 +81,7 @@ const GroupItem = ({ group, handleGroupClick }) => (
   </div>
 );
 
-const Sidebar = ({ joinedGroups, chattedUsers }) => {
+const Sidebar = ({ joinedGroups, chattedUsers, socket, setChattedUsers }) => {
   const user = useContext(UserContext);
   const { currentPage } = useContext(CurrentPageContext);
   const navigate = useNavigate();
@@ -139,7 +139,7 @@ const Sidebar = ({ joinedGroups, chattedUsers }) => {
   }, [debouncedQuery]);
 
   const handleUserClick = (user) => {
-    navigate(`users/${user._id}/detail`, { state: { user } });
+    navigate(`users/${user._id}/message`, { state: { user } });
   };
 
   const handleGroupClick = (group) => {
@@ -153,6 +153,33 @@ const Sidebar = ({ joinedGroups, chattedUsers }) => {
   const handleGroupCreate = () => {
     navigate("groups/create");
   };
+  useEffect(() => {
+    socket.on("connect", () => {
+      socket.emit("login", localStorage.getItem("token"), socket.id);
+    });
+
+    socket.on("new-message", (messageInfo) => {
+      const newUser = {
+        username: messageInfo.sender.username,
+        _id: messageInfo.sender._id,
+      };
+
+      setChattedUsers((prev) => {
+        const userExists = prev.some((user) => user._id === newUser._id);
+        if (!userExists) {
+          return [...prev, newUser];
+        }
+        return prev;
+      });
+    });
+
+    return () => {
+      if (socket) {
+        socket.off("connect");
+        socket.off("new-message");
+      }
+    };
+  }, [socket]);
 
   return (
     <div className="w-96 bg-[#1a212c] h-screen relative flex-none">
