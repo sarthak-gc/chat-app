@@ -22,14 +22,14 @@ const useDebounce = (value, delay) => {
 };
 
 const SearchInput = ({ searchQuery, setSearchQuery, setDisplay }) => (
-  <span className={`block `}>
+  <span className="">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="size-6 absolute transform right-10 top-16/30 text-[#848fa2]"
+      className="size-6 absolute transform right-10 top-16/30 text-[#848fa2] hidden sm:block"
     >
       <path
         strokeLinecap="round"
@@ -43,7 +43,7 @@ const SearchInput = ({ searchQuery, setSearchQuery, setDisplay }) => (
       }}
       onFocus={() => setDisplay(false)}
       type="search"
-      className="bg-[#24303f] w-full py-2 placeholder:text-[#848fa2] placeholder:text-center outline-none text-white pl-4 pr-10"
+      className="bg-[#24303f] w-full py-2 placeholder:text-[#848fa2] placeholder:text-center outline-none text-white sm:pl-4 sm:pr-10 pl-1"
       placeholder="Search"
       value={searchQuery}
       onChange={(e) => setSearchQuery(e.target.value)}
@@ -51,38 +51,32 @@ const SearchInput = ({ searchQuery, setSearchQuery, setDisplay }) => (
   </span>
 );
 
-const UserItem = ({ user, handleUserClick }) => (
-  <div key={user._id} onClick={() => handleUserClick(user)}>
-    <div
-      className={`flex gap-4 p-2 h-16 text-[#A9B4C7] items-end justify-center  border-b-1  border-[#dadada58] sm:border-none`}
-    >
-      <img
-        src={`https://robohash.org/${user._id}?set=set5&size=100x100`}
-        alt={user.username[0].toUpperCase()}
-        className="w-8 h-8 rounded-full"
-      />
-      <div
-        className={`flex gap-4 p-2 h-16 text-[#A9B4C7] items-end justify-center  border-b-1  border-[#dadada58] sm:border-none`}
-      >
-        <span>{user.username}</span>
+const UserItem = ({ user, handleUserClick }) => {
+  return (
+    <div key={user._id} onClick={() => handleUserClick(user)}>
+      <div className="flex gap-4 p-2 h-16 text-[#A9B4C7] items-end justify-center sm:border-0 border-b border-[#dadada58]">
+        <img
+          src={`https://robohash.org/${user._id}?set=set5&size=100x100`}
+          alt={user.username[0].toUpperCase()}
+          className="w-8 h-8 rounded-full "
+        />
+        <div className="border-b border-[#dadada58] w-full pb-2 hidden sm:block">
+          <span>{user.username}</span>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const GroupItem = ({ group, handleGroupClick }) => (
   <div key={group._id} onClick={() => handleGroupClick(group)}>
-    <div
-      className={`flex gap-4 p-2 h-16 text-[#A9B4C7] items-end justify-center  border-b-1  border-[#dadada58] sm:border-none`}
-    >
+    <div className="flex gap-4 p-2 h-16 text-[#A9B4C7] items-end justify-center sm:border-0 border-b border-[#dadada58]">
       <img
         src={`https://robohash.org/${group._id}?set=set5&size=100x100`}
         alt={group.groupName[0].toUpperCase()}
         className={`w-8 h-8 rounded-full`}
       />
-      <div
-        className={`flex gap-4 p-2 h-16 text-[#A9B4C7] items-end justify-center  border-b-1  border-[#dadada58] sm:border-none`}
-      >
+      <div className="border-b border-[#dadada58] w-full pb-2 hidden sm:block">
         <span>{group.groupName}</span>
       </div>
     </div>
@@ -102,7 +96,6 @@ const Sidebar = ({ joinedGroups, chattedUsers, socket, setChattedUsers }) => {
   const [showJoinedGroups, setShowJoinedGroups] = useState(true);
 
   const debouncedQuery = useDebounce(searchQuery, 500);
-
   useEffect(() => {
     if (!searchQuery) {
       setUsers([]);
@@ -205,22 +198,24 @@ const Sidebar = ({ joinedGroups, chattedUsers, socket, setChattedUsers }) => {
       }
     };
   }, [socket]);
-
+  const handleLogout = () => {
+    if (!window.confirm("Are you sure you want to logout?")) {
+      return;
+    }
+    localStorage.clear();
+    navigate("/login");
+  };
   return (
-    <div
-      className={`w-full sm:w-[320px]  bg-[#1a212c] h-screen relative flex-none overflow-hidden`}
-    >
-      <div className="p-4 flex flex-col gap-2 border-b border-gray-200 relative min-h-[104px] justify-center">
-        <div className="flex items-center justify-center gap-3">
-          <h1 className="text-white  text-center">
-            {currentPage && currentPage[0].toUpperCase() + currentPage.slice(1)}
-          </h1>
-        </div>
+    <div className="w-32 sm:w-[320px]  bg-[#1a212c] h-screen relative flex-none overflow-hidden">
+      <div className="sm:p-4 py-4 px-2 flex flex-col gap-2 border-b border-gray-200 relative justify-center min-h-[104px] ">
+        <h1 className="text-white  text-center">
+          {currentPage && currentPage[0].toUpperCase() + currentPage.slice(1)}
+        </h1>
 
         {currentPage === "groups" && (
           <span
             onClick={handleGroupCreate}
-            className="sm:absolute top-3.5 right-10 hover:bg-[#24303f] flex items-center justify-center rounded-full cursor-pointer text-white "
+            className="absolute top-3.5 right-10 hover:bg-[#24303f] flex items-center justify-center rounded-full cursor-pointer text-white"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -228,7 +223,7 @@ const Sidebar = ({ joinedGroups, chattedUsers, socket, setChattedUsers }) => {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="size-6"
+              className="size-6 "
             >
               <path
                 strokeLinecap="round"
@@ -273,9 +268,37 @@ const Sidebar = ({ joinedGroups, chattedUsers, socket, setChattedUsers }) => {
         </div>
       )}
       {currentPage === "settings" && (
-        <div className="text-white h-full">
-          <h1>{user.username}</h1>
-          <h1>Logout</h1>
+        <div className="text-white h-full px-4">
+          <div className="flex gap-4 mt-4 items-center hover:bg-[#1e2939] py-4  ">
+            <img
+              src={`https://robohash.org/${user._id}?set=set5&size=100x100`}
+              alt={user.username[0].toUpperCase()}
+              className="w-12 h-12 rounded-full "
+            />
+            <div className="flex-col  sm:flex hidden">
+              <span>{user.username[0] + user.username.slice(1)}</span>
+              <span>{user.id}</span>
+            </div>
+          </div>
+
+          <div
+            className="flex py-4 items-center px-2  text-red-500 gap-4 w-full hover:bg-[#1e2939]  cursor-pointer "
+            onClick={() => {
+              handleLogout();
+            }}
+          >
+            <svg
+              xmlns="http://ww.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="red"
+              className="w-10 h-10  rounded-3xl  "
+            >
+              <path d="M15 4H18C19.1046 4 20 4.89543 20 6V18C20 19.1046 19.1046 20 18 20H15M8 8L4 12M4 12L8 16M4 12L16 12" />
+            </svg>
+            <span className="text-red-500 sm:block hidden">Logout</span>
+          </div>
         </div>
       )}
       {users.length > 0 && !showChattedUser && (
