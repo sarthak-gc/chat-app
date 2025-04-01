@@ -1,8 +1,6 @@
-import React from "react";
-import Sidebar from "../components/Sidebar";
-
+import Welcome from "./Welcome";
 const Settings = () => {
-  // return <Sidebar />;
+  return <Welcome />;
 };
 
 export default Settings;
