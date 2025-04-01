@@ -8,7 +8,7 @@ const put = async ({ body, route }) => {
     }
 
     const response = await axios.put(
-      `http://localhost:3000/${route}`,
+      `${import.meta.env.VITE_SOCKET_IO_URL}/${route}`,
       { body },
       {
         headers: {

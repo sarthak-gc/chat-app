@@ -7,12 +7,15 @@ const del = async (route, params) => {
       throw new Error("No token found. Please log in.");
     }
 
-    const response = await axios.delete(`http://localhost:3000/${route}`, {
-      params: params,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axios.delete(
+      `${import.meta.env.VITE_SOCKET_IO_URL}/${route}`,
+      {
+        params: params,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     return response.data;
   } catch (err) {

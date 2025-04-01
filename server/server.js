@@ -21,11 +21,3 @@ app.use(express.json());
 app.use(router);
 socketHandler(io);
 httpServer.listen(3000);
-
-// if (
-//   connectDB() !==
-//   "No connection string due to invalid env variable for ENVIRONMENT_STAGE"
-// ) {
-// } else {
-//   console.log(connectDB());
-// }

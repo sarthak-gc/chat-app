@@ -10,8 +10,10 @@ const post = async (body, route) => {
         throw new Error("No token found. Please log in.");
       }
     }
+
+    console.log("hi");
     const response = await axios.post(
-      `http://localhost:3000/${route}`,
+      `${import.meta.env.VITE_SOCKET_IO_URL}/${route}`,
       { body },
       {
         headers: {
