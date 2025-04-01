@@ -29,10 +29,6 @@ export const socketHandler = (io) => {
         const userId = _id.toString();
 
         userSockets.set(userId, socket.id);
-
-        broadcastOnlineUser(io, username, true);
-
-        console.log("user connected : ", userId, "socket id : ", socket.id);
       } catch (e) {
         if (e instanceof jwt.TokenExpiredError) {
           console.log("Token has expired");
@@ -46,14 +42,11 @@ export const socketHandler = (io) => {
     });
 
     socket.on("group-click", (groupId, userId) => {
-      socket.join(groupId);
-
       if (!groupSockets.has(groupId)) {
         groupSockets.set(groupId, new Set());
       }
-
+      socket.join(groupId);
       groupSockets.get(groupId).add(userId);
-
       broadcastGroupJoin(io, groupId, userId);
     });
 
@@ -61,29 +54,9 @@ export const socketHandler = (io) => {
       broadcastGroupMessage(io, sender, message, groupId);
     });
 
-    socket.on("remove-group-message", (messageId, groupId) => {
-      broadcastRemoveMessage(io, messageId, groupId);
-    });
-
-    socket.on("group-create", (members) => {
-      console.log(members);
-    });
-    socket.on("join-group", (groupId, userId) => {
-      socket.leave(groupId);
-      broadcastGroupLeave(io, groupId, userId);
-    });
-    socket.on("leave-group", (groupId, userId) => {
-      socket.leave(groupId);
-      broadcastGroupLeave(io, groupId, userId);
-    });
-
     socket.on("message", async (senderId, message, receiverId) => {
       const sender = await UserModel.findById(senderId).select("-password");
       broadcastNewMessage(io, message, sender, receiverId);
-    });
-
-    socket.on("logout", (userId) => {
-      broadcastOnlineUser(io, userId, false);
     });
 
     socket.on("disconnect", () => {
@@ -92,10 +65,6 @@ export const socketHandler = (io) => {
   });
 };
 
-const handleGroupClick = (io, groupId, userId) => {};
-const broadcastGroupLeave = (io, groupId, userId) => {
-  io.to(groupId).emit("user-left", { userId });
-};
 const broadcastGroupMessage = async (io, sender, message, groupId) => {
   io.to(groupId).emit("new-group-message", { sender, message, groupId });
   await MessageModel.create({
@@ -104,10 +73,6 @@ const broadcastGroupMessage = async (io, sender, message, groupId) => {
     group: groupId,
     readBy: [],
   });
-};
-
-const broadcastRemoveMessage = (io, messageId, groupId) => {
-  io.to(groupId).emit("remove-message", messageId);
 };
 
 const broadcastNewMessage = async (io, message, sender, receiverId) => {
@@ -128,10 +93,6 @@ const broadcastNewMessage = async (io, message, sender, receiverId) => {
       receiver: receiverId,
     });
   }
-};
-
-const broadcastOnlineUser = (io, username, isOnline) => {
-  io.emit("online-users", { username, isOnline });
 };
 
 const broadcastGroupJoin = (io, groupId, userId) => {

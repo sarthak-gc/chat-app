@@ -9,9 +9,7 @@ const Login = () => {
     password: "",
   });
   const navigate = useNavigate();
-  useEffect(() => {
-    localStorage.removeItem("token");
-  }, []);
+
   const handleLogin = async (e) => {
     try {
       e.preventDefault();

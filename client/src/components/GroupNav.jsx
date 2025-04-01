@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 const GroupNav = ({ groupname, groupId }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { group } = location.state;
+  const { group, isMember, isCreator } = location.state;
 
   return (
     <nav className="bg-[#24303f] w-full  text-white min-h-26 px-12  flex   items-center ">
@@ -24,7 +24,9 @@ const GroupNav = ({ groupname, groupId }) => {
         <span
           className=" flex items-center justify-center"
           onClick={() => {
-            navigate(`/feed/groups/${group._id}/detail`, { state: { group } });
+            navigate(`/feed/groups/${group._id}/detail`, {
+              state: { group, isMember, isCreator },
+            });
           }}
         >
           <svg

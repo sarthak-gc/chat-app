@@ -34,7 +34,7 @@ const authentication = async (req, res, next) => {
       console.log("Error during token verification", e);
       message = "Error during token verification" + e;
     }
-    return res.json({ status: "error", message });
+    return res.status(403).json({ status: "error", message });
   }
 };
 export default authentication;

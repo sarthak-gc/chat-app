@@ -4,18 +4,16 @@ import { RouterProvider } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Feed from "./pages/Feed";
-// import SearchPage from "./pages/SearchPage";
 import PageNotFound from "./pages/PageNotFound";
 import { CurrentPageProvider } from "./context/CurrentPageProvider";
 import GroupPage from "./pages/GroupPage";
 import UserPage from "./pages/UserPage";
 import Settings from "./pages/Settings";
 import Message from "./pages/Message";
-
 import { UserDetails } from "./context/UserDetails";
 import UserDetailPage from "./pages/UserDetailPage";
-
 import GroupDetailPage from "./pages/GroupDetailPage";
+import ProtectedRoute from "./components/ProtectedRoutes";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login />, errorElement: <PageNotFound /> },
@@ -23,25 +21,37 @@ const router = createBrowserRouter([
   { path: "/register", element: <Register /> },
   {
     path: "/feed",
-    element: <Feed />,
+    element: <ProtectedRoute element={<Feed />} />,
     children: [
       {
         path: "users",
-        element: <UserPage />,
+        element: <ProtectedRoute element={<UserPage />} />,
       },
       {
         path: "groups",
-        element: <GroupPage />,
+        element: <ProtectedRoute element={<GroupPage />} />,
       },
-
-      { path: "groups/create", element: <CreateGroup /> },
-      { path: ":groups/:groupId/detail", element: <GroupDetailPage /> },
-
-      { path: "users/:userId/detail", element: <UserDetailPage /> },
-
-      { path: "settings", element: <Settings /> },
-      { path: "users/:userId/message", element: <Message /> },
-      { path: "groups/:groupId/message", element: <Message /> },
+      {
+        path: "groups/create",
+        element: <ProtectedRoute element={<CreateGroup />} />,
+      },
+      {
+        path: ":groups/:groupId/detail",
+        element: <ProtectedRoute element={<GroupDetailPage />} />,
+      },
+      {
+        path: "users/:userId/detail",
+        element: <ProtectedRoute element={<UserDetailPage />} />,
+      },
+      { path: "settings", element: <ProtectedRoute element={<Settings />} /> },
+      {
+        path: "users/:userId/message",
+        element: <ProtectedRoute element={<Message />} />,
+      },
+      {
+        path: "groups/:groupId/message",
+        element: <ProtectedRoute element={<Message />} />,
+      },
     ],
   },
 ]);

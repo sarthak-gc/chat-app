@@ -19,6 +19,8 @@ export const createGroup = async (req, res) => {
       creator,
       visibility: visibility === "Private" ? "Private" : "Public",
     });
+    await newGroup.populate("creator", "username");
+    await newGroup.populate("members", "username");
 
     res.status(201).json({
       status: "success",
@@ -36,6 +38,7 @@ export const createGroup = async (req, res) => {
 // groupRouter.delete("/delete/:groupId", deleteGroup);
 export const deleteGroup = async (req, res) => {
   const { groupId } = req.params;
+  console.log(groupId);
   try {
     const groupExists = await GroupModel.findById(groupId);
     if (!groupExists) {
@@ -341,16 +344,9 @@ export const leaveGroup = async (req, res) => {
         .json({ status: "error", message: "Group not found" });
     }
 
-    if (!groupExists.members.includes(req.id)) {
-      return res.status(403).json({
-        status: "error",
-        message: "You are not a member of this group",
-      });
-    }
-
     if (
       groupExists.creator.toString() === req.id &&
-      groupExists.members.length > 1
+      groupExists.members.length > 0
     ) {
       return res.status(403).json({
         status: "error",
@@ -358,6 +354,14 @@ export const leaveGroup = async (req, res) => {
           "Cannot leave the group as it is created by you. Transfer ownership before leaving",
       });
     }
+
+    if (!groupExists.members.includes(req.id)) {
+      return res.status(403).json({
+        status: "error",
+        message: "You are not a member of this group",
+      });
+    }
+
     const updatedGroup = await GroupModel.findOneAndUpdate(
       { _id: groupId },
       {

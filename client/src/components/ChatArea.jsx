@@ -24,13 +24,6 @@ const ChatArea = () => {
   }, [message]);
   useEffect(() => {
     const getOldMessages = async () => {
-      // format :
-      // createdAt: "2025-03-26T15:21:06.774Z"
-      // message: "from sarthak1234 to testing"
-      // receiver: "67e200fd9b76a31b9c64b075"
-      // sender: "67e200659b76a31b9c64b06d"
-      // status: "Sent"
-      // updatedAt: "2025-03-26T15:21:06.774Z"
       const res = await get(`message/${user._id}`);
       setMessagesCollection(res.data.messages);
     };

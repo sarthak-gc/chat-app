@@ -43,7 +43,8 @@ const UserItem = ({ user, handleUserClick, isChecked }) => {
 const CreateGroup = () => {
   const [groupName, setGroupName] = useState("");
   const creator = useContext(UserContext);
-  const { socket, setJoinedGroups } = useOutletContext();
+  const { setJoinedGroups } = useOutletContext();
+  console.log(setJoinedGroups);
   const [users, setUsers] = useState([]);
   const [checkedUsers, setCheckedUsers] = useState({});
   const [filterQuery, setFilterQuery] = useState("");
@@ -62,6 +63,7 @@ const CreateGroup = () => {
       [user._id]: !prev[user._id],
     }));
   };
+
   useEffect(() => {
     const getUsers = async () => {
       const res = await get("user/users/all");
@@ -73,9 +75,11 @@ const CreateGroup = () => {
     (userId) => checkedUsers[userId]
   );
 
-  const filteredUsers = users.filter((user) =>
-    user.username.toLowerCase().includes(filterQuery.toLowerCase())
-  );
+  const filteredUsers = users.filter((user) => {
+    return user._id != creator.id
+      ? user.username.toLowerCase().includes(filterQuery.toLowerCase())
+      : "";
+  });
 
   const handleGroupCreate = async () => {
     try {
@@ -103,10 +107,11 @@ const CreateGroup = () => {
             visibility: "Public",
           },
         ]);
-        socket.emit("group-create", selectedMembers);
+
         navigate(`/feed/groups/${group._id}/message`, {
           state: {
             group: group,
+            isCreator: true,
           },
         });
       }
@@ -125,7 +130,6 @@ const CreateGroup = () => {
           className="col-start-3 justify-self-end text-[10px]"
           onClick={handleGroupCreate}
         >
-          {" "}
           Next
         </span>
       </div>

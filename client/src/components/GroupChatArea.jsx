@@ -24,8 +24,6 @@ const GroupChatArea = () => {
 
   useEffect(() => {
     const getOldMessages = async () => {
-      // messageRouter.get("/group/:groupId/", getGroupMessages);
-
       const res = await get(`message/group/${group._id}`, {
         groupId: group._id,
       });
@@ -43,7 +41,6 @@ const GroupChatArea = () => {
           {
             message: messageInfo.message,
             sender: { _id: messageInfo.sender },
-            // group: messageInfo,
           },
         ]);
       }
@@ -73,7 +70,7 @@ const GroupChatArea = () => {
       ...prev,
       { message, sender: { _id: senderId }, group: { _id: groupId } },
     ]);
-
+    console.log("HIasd");
     setMessage("");
   };
 
@@ -125,19 +122,18 @@ const GroupChatArea = () => {
               } mb-2 text-white`}
             >
               <div className="flex  items-end  max-w-4/5">
-                {/* {elem.sender._id != sender.id && ( */}
-                <img
-                  onClick={() => {
-                    navigate(`/feed/users/${elem.sender._id}/detail`, {
-                      state: { user: elem.sender },
-                    });
-                  }}
-                  src={`https://robohash.org/${elem.sender._id}?set=set5&size=100x100`}
-                  alt={elem.sender.username}
-                  className="w-8 h-8"
-                />
-                {/* )} */}
-
+                {elem.sender._id !== sender.id && (
+                  <img
+                    onClick={() => {
+                      navigate(`/feed/users/${elem.sender._id}/detail`, {
+                        state: { user: elem.sender },
+                      });
+                    }}
+                    src={`https://robohash.org/${elem.sender._id}?set=set5&size=100x100`}
+                    alt={elem.sender.username}
+                    className={`w-8 h-8`}
+                  />
+                )}
                 <div className="w-fit relative">
                   <div
                     className={`relative px-5 py-1 rounded-2xl whitespace-pre-wrap break-words flex flex-col  ${
@@ -178,6 +174,18 @@ const GroupChatArea = () => {
                     />
                   </div>
                 </div>
+                {elem.sender._id === sender.id && (
+                  <img
+                    onClick={() => {
+                      navigate(`/feed/users/${elem.sender._id}/detail`, {
+                        state: { user: elem.sender },
+                      });
+                    }}
+                    src={`https://robohash.org/${elem.sender._id}?set=set5&size=100x100`}
+                    alt={elem.sender.username}
+                    className={`w-8 h-8`}
+                  />
+                )}
               </div>
             </li>
           );

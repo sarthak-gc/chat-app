@@ -7,6 +7,7 @@ import Welcome from "./Welcome.jsx";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 const Feed = () => {
   const [joinedGroups, setJoinedGroups] = useState([]);
+
   const [chattedUsers, setChattedUsers] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
@@ -25,6 +26,9 @@ const Feed = () => {
         setJoinedGroups(res.data.groups);
       } catch (e) {
         console.log(e.message);
+        if (e.message == "Invalid token") {
+          navigate("/login");
+        }
       }
     };
 

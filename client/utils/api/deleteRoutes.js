@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 
-const del = async ({ route, params }) => {
+const del = async (route, params) => {
   try {
     const token = localStorage.getItem("token");
     if (!token) {

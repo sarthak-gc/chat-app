@@ -140,14 +140,30 @@ const Sidebar = ({ joinedGroups, chattedUsers, socket, setChattedUsers }) => {
 
   const handleUserClick = (user) => {
     navigate(`users/${user._id}/message`, { state: { user } });
+    setSearchQuery("");
+    setShowChattedUser(true);
   };
 
   const handleGroupClick = (group) => {
-    // if (group.visibility === "Private") {
-    //   alert("This group is private. Only members can view the contents.");
-    //   return;
-    // }
-    navigate(`groups/${group._id}/message`, { state: { group } });
+    let isMember;
+    group.members.forEach((member) => {
+      if (member._id === user.id) {
+        isMember = true;
+      }
+    });
+    const isCreator = group.creator._id == user.id;
+
+    if (isMember || isCreator) {
+      navigate(`groups/${group._id}/message`, {
+        state: { group, isMember, isCreator },
+      });
+    } else {
+      navigate(`groups/${group._id}/detail`, {
+        state: { group, isMember, isCreator },
+      });
+    }
+    setSearchQuery("");
+    setShowJoinedGroups(true);
   };
 
   const handleGroupCreate = () => {
@@ -182,7 +198,7 @@ const Sidebar = ({ joinedGroups, chattedUsers, socket, setChattedUsers }) => {
   }, [socket]);
 
   return (
-    <div className="w-96 bg-[#1a212c] h-screen relative flex-none">
+    <div className="w-full sm:bg-white sm:w-[320px]  bg-[#1a212c] h-screen relative flex-none overflow-hidden md:bg-[red] lg:bg-black xl:bg-purple-400">
       <div className="p-4 flex flex-col gap-2 border-b border-gray-200 relative ">
         <h1 className="text-white  text-center">
           {currentPage &&
@@ -222,7 +238,7 @@ const Sidebar = ({ joinedGroups, chattedUsers, socket, setChattedUsers }) => {
         )}
       </div>
       {currentPage === "groups" && showJoinedGroups && (
-        <div className="overflow-scroll h-[calc(100% - 104px)">
+        <div className="overflow-scroll h-[83vh] scrollbar-none">
           {joinedGroups.map((group) => (
             <GroupItem
               key={group._id}
@@ -244,7 +260,11 @@ const Sidebar = ({ joinedGroups, chattedUsers, socket, setChattedUsers }) => {
           ))}
         </div>
       )}
-
+      {currentPage === "settings" && (
+        <div className="text-white h-full">
+          <h1>Logout</h1>
+        </div>
+      )}
       {users.length > 0 && !showChattedUser && (
         <div className="overflow-scroll h-[calc(100% - 104px)">
           {users.map((user) => (
