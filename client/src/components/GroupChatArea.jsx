@@ -70,7 +70,6 @@ const GroupChatArea = () => {
       ...prev,
       { message, sender: { _id: senderId }, group: { _id: groupId } },
     ]);
-    console.log("HIasd");
     setMessage("");
   };
 

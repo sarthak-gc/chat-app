@@ -44,7 +44,6 @@ const CreateGroup = () => {
   const [groupName, setGroupName] = useState("");
   const creator = useContext(UserContext);
   const { setJoinedGroups } = useOutletContext();
-  console.log(setJoinedGroups);
   const [users, setUsers] = useState([]);
   const [checkedUsers, setCheckedUsers] = useState({});
   const [filterQuery, setFilterQuery] = useState("");
