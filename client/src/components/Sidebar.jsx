@@ -22,7 +22,7 @@ const useDebounce = (value, delay) => {
 };
 
 const SearchInput = ({ searchQuery, setSearchQuery, setDisplay }) => (
-  <span>
+  <span className={`block `}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -53,13 +53,17 @@ const SearchInput = ({ searchQuery, setSearchQuery, setDisplay }) => (
 
 const UserItem = ({ user, handleUserClick }) => (
   <div key={user._id} onClick={() => handleUserClick(user)}>
-    <div className="flex gap-4 p-2 h-16 text-[#A9B4C7] items-end hover:bg-[#24303f]">
+    <div
+      className={`flex gap-4 p-2 h-16 text-[#A9B4C7] items-end justify-center  border-b-1  border-[#dadada58] sm:border-none`}
+    >
       <img
         src={`https://robohash.org/${user._id}?set=set5&size=100x100`}
         alt={user.username[0].toUpperCase()}
         className="w-8 h-8 rounded-full"
       />
-      <div className="border-b border-[#dadada58] w-full pb-2">
+      <div
+        className={`flex gap-4 p-2 h-16 text-[#A9B4C7] items-end justify-center  border-b-1  border-[#dadada58] sm:border-none`}
+      >
         <span>{user.username}</span>
       </div>
     </div>
@@ -68,13 +72,17 @@ const UserItem = ({ user, handleUserClick }) => (
 
 const GroupItem = ({ group, handleGroupClick }) => (
   <div key={group._id} onClick={() => handleGroupClick(group)}>
-    <div className="flex gap-4 p-2 h-16 text-[#A9B4C7] items-end ">
+    <div
+      className={`flex gap-4 p-2 h-16 text-[#A9B4C7] items-end justify-center  border-b-1  border-[#dadada58] sm:border-none`}
+    >
       <img
         src={`https://robohash.org/${group._id}?set=set5&size=100x100`}
         alt={group.groupName[0].toUpperCase()}
         className={`w-8 h-8 rounded-full`}
       />
-      <div className="border-b border-[#dadada58] w-full pb-2">
+      <div
+        className={`flex gap-4 p-2 h-16 text-[#A9B4C7] items-end justify-center  border-b-1  border-[#dadada58] sm:border-none`}
+      >
         <span>{group.groupName}</span>
       </div>
     </div>
@@ -94,6 +102,7 @@ const Sidebar = ({ joinedGroups, chattedUsers, socket, setChattedUsers }) => {
   const [showJoinedGroups, setShowJoinedGroups] = useState(true);
 
   const debouncedQuery = useDebounce(searchQuery, 500);
+
   useEffect(() => {
     if (!searchQuery) {
       setUsers([]);
@@ -198,17 +207,20 @@ const Sidebar = ({ joinedGroups, chattedUsers, socket, setChattedUsers }) => {
   }, [socket]);
 
   return (
-    <div className="w-full sm:bg-white sm:w-[320px]  bg-[#1a212c] h-screen relative flex-none overflow-hidden md:bg-[red] lg:bg-black xl:bg-purple-400">
-      <div className="p-4 flex flex-col gap-2 border-b border-gray-200 relative ">
-        <h1 className="text-white  text-center">
-          {currentPage &&
-            currentPage[0].toUpperCase() + currentPage.slice(1) + user.username}
-        </h1>
+    <div
+      className={`w-full sm:w-[320px]  bg-[#1a212c] h-screen relative flex-none overflow-hidden`}
+    >
+      <div className="p-4 flex flex-col gap-2 border-b border-gray-200 relative min-h-[104px] justify-center">
+        <div className="flex items-center justify-center gap-3">
+          <h1 className="text-white  text-center">
+            {currentPage && currentPage[0].toUpperCase() + currentPage.slice(1)}
+          </h1>
+        </div>
 
         {currentPage === "groups" && (
           <span
             onClick={handleGroupCreate}
-            className="absolute top-3.5 right-10   hover:bg-[#24303f] flex items-center justify-center rounded-full cursor-pointer text-white"
+            className="sm:absolute top-3.5 right-10 hover:bg-[#24303f] flex items-center justify-center rounded-full cursor-pointer text-white "
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -262,6 +274,7 @@ const Sidebar = ({ joinedGroups, chattedUsers, socket, setChattedUsers }) => {
       )}
       {currentPage === "settings" && (
         <div className="text-white h-full">
+          <h1>{user.username}</h1>
           <h1>Logout</h1>
         </div>
       )}

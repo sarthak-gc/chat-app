@@ -8,7 +8,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-gray-800 absolute bottom-0 w-full">
-      <ul className="flex px-4 text-white items-center justify-between">
+      <ul className="flex px-0 sm:px-4 text-white items-center justify-between">
         <li className="w-full flex justify-center items-center">
           <NavLink
             onClick={() => {
