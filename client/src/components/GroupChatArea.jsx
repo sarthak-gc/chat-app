@@ -99,14 +99,6 @@ const GroupChatArea = () => {
     };
   }, [message]);
 
-  useEffect(() => {
-    socket.emit(
-      "group-joined",
-      localStorage.getItem("token"),
-      "67e8d135d498e1f6bf350256"
-    );
-  }, [socket]);
-
   return (
     <div className="flex flex-col relative h-[calc(100%-104px)] pb-14 ">
       <div className="flex-grow overflow-auto p-4 bg-[#121d2b] text-white scrollbar-none">

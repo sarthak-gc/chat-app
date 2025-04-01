@@ -54,7 +54,7 @@ const SearchInput = ({ searchQuery, setSearchQuery, setDisplay }) => (
 const UserItem = ({ user, handleUserClick }) => {
   return (
     <div key={user._id} onClick={() => handleUserClick(user)}>
-      <div className="flex gap-4 p-2 h-16 text-[#A9B4C7] items-end justify-center sm:border-0 border-b border-[#dadada58]">
+      <div className="flex gap-4 p-2 h-16 text-[#A9B4C7] items-end justify-center sm:border-0 border-b border-[#dadada58] ">
         <img
           src={`https://robohash.org/${user._id}?set=set5&size=100x100`}
           alt={user.username[0].toUpperCase()}
@@ -206,33 +206,35 @@ const Sidebar = ({ joinedGroups, chattedUsers, socket, setChattedUsers }) => {
     navigate("/login");
   };
   return (
-    <div className="w-32 sm:w-[320px]  bg-[#1a212c] h-screen relative flex-none overflow-hidden">
+    <div className="w-32 sm:w-[320px]  bg-[#1a212c] h-[100vh] relative flex-none overflow-hidden">
       <div className="sm:p-4 py-4 px-2 flex flex-col gap-2 border-b border-gray-200 relative justify-center min-h-[104px] ">
-        <h1 className="text-white  text-center">
-          {currentPage && currentPage[0].toUpperCase() + currentPage.slice(1)}
-        </h1>
+        <div className="flex sm:block ">
+          <h1 className="text-white  text-center flex-none">
+            {currentPage && currentPage[0].toUpperCase() + currentPage.slice(1)}
+          </h1>
 
-        {currentPage === "groups" && (
-          <span
-            onClick={handleGroupCreate}
-            className="absolute top-3.5 right-10 hover:bg-[#24303f] flex items-center justify-center rounded-full cursor-pointer text-white"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-6 "
+          {currentPage === "groups" && (
+            <span
+              onClick={handleGroupCreate}
+              className="absolute top-3.5 right-1/5 sm:right-10 hover:bg-[#24303f] flex items-center justify-center rounded-full cursor-pointer text-white"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-              />
-            </svg>
-          </span>
-        )}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-6 "
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                />
+              </svg>
+            </span>
+          )}
+        </div>
 
         {currentPage !== "settings" && (
           <SearchInput
@@ -245,7 +247,7 @@ const Sidebar = ({ joinedGroups, chattedUsers, socket, setChattedUsers }) => {
         )}
       </div>
       {currentPage === "groups" && showJoinedGroups && (
-        <div className="overflow-scroll h-[83vh] scrollbar-none">
+        <div className="overflow-scroll h-[83%] scrollbar-none">
           {joinedGroups.map((group) => (
             <GroupItem
               key={group._id}
@@ -257,7 +259,7 @@ const Sidebar = ({ joinedGroups, chattedUsers, socket, setChattedUsers }) => {
       )}
 
       {currentPage === "users" && showChattedUser && (
-        <div className="overflow-scroll h-[calc(100% - 104px)">
+        <div className="overflow-scroll h-[83%] scrollbar-none">
           {chattedUsers.map((chattedUser) => (
             <UserItem
               key={chattedUser._id}
