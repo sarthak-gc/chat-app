@@ -14,6 +14,7 @@ import { UserDetails } from "./context/UserDetails";
 import UserDetailPage from "./pages/UserDetailPage";
 import GroupDetailPage from "./pages/GroupDetailPage";
 import ProtectedRoute from "./components/ProtectedRoutes";
+import { Analytics } from "@vercel/analytics/react";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login />, errorElement: <PageNotFound /> },
@@ -61,6 +62,7 @@ const App = () => {
     <UserDetails>
       <CurrentPageProvider>
         <RouterProvider router={router} />
+        <Analytics />
       </CurrentPageProvider>
     </UserDetails>
   );
